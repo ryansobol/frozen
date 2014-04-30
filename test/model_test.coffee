@@ -136,24 +136,46 @@ describe 'Model', ->
       expect(@model.get('last_name')).to.be undefined
 
   describe 'set', ->
-    beforeEach ->
-      @model = new Model()
-      @returns = @model.set('firstName', 'Amy')
+    describe 'given no attributes', ->
+      beforeEach ->
+        @model = new Model()
+        @returns = @model.set('firstName', 'Amy')
 
-    it 'has the correct attributes', ->
-      expect(@model.attributes).to.eql {}
+      it 'has the correct attributes', ->
+        expect(@model.attributes).to.eql {}
 
-    it 'has the correct errors', ->
-      expect(@model.errors).to.eql {}
+      it 'has the correct errors', ->
+        expect(@model.errors).to.eql {}
 
-    it 'returns an instance of itself', ->
-      expect(@returns instanceof Model).to.be true
+      it 'returns an instance of itself', ->
+        expect(@returns instanceof Model).to.be true
 
-    it 'returns the correct attributes', ->
-      expect(@returns.attributes).to.eql firstName: 'Amy'
+      it 'returns the correct attributes', ->
+        expect(@returns.attributes).to.eql firstName: 'Amy'
 
-    it 'returns the correct errors', ->
-      expect(@returns.errors).to.eql {}
+      it 'returns the correct errors', ->
+        expect(@returns.errors).to.eql {}
+
+    describe 'given attributes', ->
+      beforeEach ->
+        @attrs = { firstName: 'Jolene' }
+        @model = new Model @attrs
+        @returns = @model.set('firstName', 'Amy')
+
+      it 'has the correct attributes', ->
+        expect(@model.attributes).to.eql @attrs
+
+      it 'has the correct errors', ->
+        expect(@model.errors).to.eql {}
+
+      it 'returns an instance of itself', ->
+        expect(@returns instanceof Model).to.be true
+
+      it 'returns the correct attributes', ->
+        expect(@returns.attributes).to.eql firstName: 'Amy'
+
+      it 'returns the correct errors', ->
+        expect(@returns.errors).to.eql {}
 
     describe 'given a model with coersion', ->
       beforeEach ->
@@ -188,19 +210,34 @@ describe 'Model', ->
           expect(@returns.errors).to.eql {}
 
   describe 'toJSON', ->
-    beforeEach ->
-      @object = firstName: 'David'
-      @model = new Model @object
-      @returns = @model.toJSON()
+    describe 'given no attributes', ->
+      beforeEach ->
+        @model = new Model()
+        @returns = @model.toJSON()
 
-    it 'has the correct attributes', ->
-      expect(@model.attributes).to.eql @object
+      it 'has the correct attributes', ->
+        expect(@model.attributes).to.eql {}
 
-    it 'has the correct errors', ->
-      expect(@model.errors).to.eql {}
+      it 'has the correct errors', ->
+        expect(@model.errors).to.eql {}
 
-    it 'returns the correct attributes', ->
-      expect(@returns).to.eql @model.attributes
+      it 'returns the correct attributes', ->
+        expect(@returns).to.eql {}
+
+    describe 'given attributes', ->
+      beforeEach ->
+        @object = firstName: 'David'
+        @model = new Model @object
+        @returns = @model.toJSON()
+
+      it 'has the correct attributes', ->
+        expect(@model.attributes).to.eql @object
+
+      it 'has the correct errors', ->
+        expect(@model.errors).to.eql {}
+
+      it 'returns the correct attributes', ->
+        expect(@returns).to.eql @model.attributes
 
     describe 'given a model with coersion', ->
       beforeEach ->
