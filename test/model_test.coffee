@@ -2,7 +2,7 @@ expect = require 'expect.js'
 {Model} = require '../src/frozen'
 
 describe 'Model', ->
-  describe '.constructor', ->
+  describe 'constructor', ->
     describe 'given no object', ->
       beforeEach ->
         @model = new Model()
@@ -66,7 +66,7 @@ describe 'Model', ->
       it 'has the correct errors', ->
         expect(@model.errors).to.eql {}
 
-  describe '.get', ->
+  describe 'get', ->
     beforeEach ->
       @model = new Model firstName: 'Olivia'
 
@@ -76,7 +76,7 @@ describe 'Model', ->
     it 'gets the correct value of an unknown property', ->
       expect(@model.get('last_name')).to.be undefined
 
-  describe '.set', ->
+  describe 'set', ->
     beforeEach ->
       @model = new Model()
       @returns = @model.set('firstName', 'Amy')
@@ -96,7 +96,7 @@ describe 'Model', ->
     it 'returns the correct errors', ->
       expect(@returns.errors).to.eql {}
 
-  describe '.toJSON', ->
+  describe 'toJSON', ->
     beforeEach ->
       @object = firstName: 'David'
       @model = new Model @object
@@ -111,7 +111,7 @@ describe 'Model', ->
     it 'returns its attributes', ->
       expect(@returns).to.eql @model.attributes
 
-  describe '.validate', ->
+  describe 'validate', ->
     describe 'given an invalid object', ->
       beforeEach ->
         class LisaModel extends Model

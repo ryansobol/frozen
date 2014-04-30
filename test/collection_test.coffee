@@ -2,7 +2,7 @@ expect = require 'expect.js'
 {Collection, Model} = require '../src/frozen'
 
 describe 'Collection', ->
-  describe '.constructor', ->
+  describe 'constructor', ->
     describe 'given no object', ->
       beforeEach ->
         @collection = new Collection()
@@ -59,7 +59,7 @@ describe 'Collection', ->
       it 'has the correct length', ->
         expect(@collection.length).to.eql 2
 
-  describe '.add', ->
+  describe 'add', ->
     describe 'given no object', ->
       beforeEach ->
         @collection = new Collection()
@@ -131,7 +131,7 @@ describe 'Collection', ->
       it 'returns the correct length', ->
         expect(@returns.length).to.eql 1
 
-  describe '.change', ->
+  describe 'change', ->
     beforeEach ->
       @object0 = firstName: 'Alice'
       @object1 = firstName: 'Katherine'
@@ -156,7 +156,7 @@ describe 'Collection', ->
     it 'returns the correct length', ->
       expect(@returns.length).to.eql 2
 
-  describe '.destroy', ->
+  describe 'destroy', ->
     beforeEach ->
       @object0 = firstName: 'Betty'
       @object1 = firstName: 'Denise'
@@ -181,7 +181,7 @@ describe 'Collection', ->
     it 'returns the correct length', ->
       expect(@returns.length).to.eql 1
 
-  describe '.map', ->
+  describe 'map', ->
     beforeEach ->
       @object0 = firstName: 'Tracy'
       @object1 = firstName: 'Roberta'
@@ -206,7 +206,7 @@ describe 'Collection', ->
     it 'returns the correct length', ->
       expect(@returns.length).to.eql 2
 
-  describe '.toJSON', ->
+  describe 'toJSON', ->
     beforeEach ->
       @object0 = { firstName: 'Nia' }
       @object1 = { firstName: 'Tia' }
@@ -228,7 +228,7 @@ describe 'Collection', ->
     it 'returns the correct length', ->
       expect(@returns.length).to.eql 2
 
-  describe '.validate', ->
+  describe 'validate', ->
     describe 'given an invalid model', ->
       beforeEach ->
         class FrankModel extends Model
