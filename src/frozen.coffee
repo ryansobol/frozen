@@ -51,7 +51,9 @@ class Model
     new @constructor(attributes)
 
   toJSON: ->
-    @attributes
+    attributes = extend({}, @attributes)
+    attributes[prop] = attributes[prop].toJSON() for prop of @coersions
+    attributes
 
   validate: ->
     attributes = extend({}, @attributes)

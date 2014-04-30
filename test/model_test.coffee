@@ -167,8 +167,35 @@ describe 'Model', ->
     it 'has the correct errors', ->
       expect(@model.errors).to.eql {}
 
-    it 'returns its attributes', ->
+    it 'returns the correct attributes', ->
       expect(@returns).to.eql @model.attributes
+
+    describe 'given a model with coersion', ->
+      beforeEach ->
+        class AddressModel extends Model
+        class PersonModel extends Model
+          coersions:
+            address: AddressModel
+
+        @AddressModel = AddressModel
+        @PersonModel = PersonModel
+
+      describe 'given coerseable and uncoerseable attributes', ->
+        beforeEach ->
+          @address = { zipcode: '90210' }
+          @attrs = { firstName: 'Alex', address: @address }
+          @person = new @PersonModel @attrs
+          @returns = @person.toJSON()
+
+        it 'has the correct attributes', ->
+          expected = { firstName: 'Alex', address: new @AddressModel @address }
+          expect(@person.attributes).to.eql expected
+
+        it 'has the correct errors', ->
+          expect(@model.errors).to.eql {}
+
+        it 'returns the correct attributes', ->
+          expect(@returns).to.eql @attrs
 
   describe 'validate', ->
     describe 'given a model with validation', ->
