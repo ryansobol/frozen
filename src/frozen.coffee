@@ -11,6 +11,13 @@ class Model
   #  { firstName: 'Kevin', lastName: 'Bacon' }
   #
   constructor: (attributes = {}) ->
+    original = attributes
+
+    for prop, coersion of @coersions
+      if attributes[prop] and not (attributes[prop] instanceof coersion)
+        attributes = extend({}, attributes) if attributes is original
+        attributes[prop] = new coersion(attributes[prop])
+
     @attributes = Object.freeze(attributes)
 
     @errors = {}

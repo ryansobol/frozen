@@ -66,6 +66,50 @@ describe 'Model', ->
       it 'has the correct errors', ->
         expect(@model.errors).to.eql {}
 
+    describe 'given a model with a coersion', ->
+      beforeEach ->
+        class AddressModel extends Model
+        class PersonModel extends Model
+          coersions:
+            address: AddressModel
+
+        @AddressModel = AddressModel
+        @PersonModel = PersonModel
+
+      describe 'given uncoersed attributes', ->
+        beforeEach ->
+          @address = zipcode: '90120'
+          @person = new @PersonModel address: @address
+
+        it 'has the correct attribute', ->
+          expected = { address: new @AddressModel @address }
+          expect(@person.attributes).to.eql expected
+
+        it 'has the correct errors', ->
+          expect(@model.errors).to.eql {}
+
+      describe 'given coersed attributes', ->
+        beforeEach ->
+          @address = zipcode: '90120'
+          @person = new @PersonModel address: new @AddressModel @address
+
+        it 'has the correct attribute', ->
+          expected = { address: new @AddressModel @address }
+          expect(@person.attributes).to.eql expected
+
+        it 'has the correct errors', ->
+          expect(@model.errors).to.eql {}
+
+      describe 'given no attributes', ->
+        beforeEach ->
+          @person = new @PersonModel()
+
+        it 'has the correct attribute', ->
+          expect(@person.attributes).to.eql {}
+
+        it 'has the correct errors', ->
+          expect(@model.errors).to.eql {}
+
   describe 'get', ->
     beforeEach ->
       @model = new Model firstName: 'Olivia'
