@@ -3,7 +3,7 @@ expect = require 'expect.js'
 
 describe 'Model', ->
   describe 'constructor', ->
-    describe 'given no object', ->
+    describe 'given no attributes', ->
       beforeEach ->
         @model = new Model()
 
@@ -13,58 +13,59 @@ describe 'Model', ->
       it 'has the correct errors', ->
         expect(@model.errors).to.eql {}
 
-    describe 'given an object', ->
+    describe 'given attributes', ->
       beforeEach ->
-        @object = firstName: 'Jim'
-        @model = new Model @object
+        @attrs = firstName: 'Jim'
+        @model = new Model @attrs
 
       it 'has the correct attributes', ->
-        expect(@model.attributes).to.eql @object
+        expect(@model.attributes).to.eql @attrs
 
       it 'has the correct errors', ->
         expect(@model.errors).to.eql {}
 
-    describe 'given an invalid object', ->
+    describe 'given a model with validation', ->
       beforeEach ->
-        class FelixModel extends Model
+        class @FelixModel extends Model
           firstNameError: (value) -> 'Guess again' unless value is 'Felix'
 
-        @object = firstName: 'Ginny'
-        @model = new FelixModel @object
+      describe 'given invalid attributes', ->
+        beforeEach ->
+          @attrs = firstName: 'Ginny'
+          @model = new @FelixModel @attrs
 
-      it 'has the correct attributes', ->
-        expect(@model.attributes).to.eql @object
+        it 'has the correct attributes', ->
+          expect(@model.attributes).to.eql @attrs
 
-      it 'has the correct errors', ->
-        expect(@model.errors).to.eql { firstName: 'Guess again' }
+        it 'has the correct errors', ->
+          expect(@model.errors).to.eql { firstName: 'Guess again' }
 
-    describe 'given a valid object', ->
+      describe 'given valid attributes', ->
+        beforeEach ->
+          @attrs = firstName: 'Felix'
+          @model = new @FelixModel @attrs
+
+        it 'has the correct attributes', ->
+          expect(@model.attributes).to.eql @attrs
+
+        it 'has the correct errors', ->
+          expect(@model.errors).to.eql {}
+
+    describe 'given a model with faux error checking', ->
       beforeEach ->
-        class FelixModel extends Model
-          firstNameError: (value) -> 'Guess again' unless value is 'Felix'
-
-        @object = firstName: 'Felix'
-        @model = new FelixModel @object
-
-      it 'has the correct attributes', ->
-        expect(@model.attributes).to.eql @object
-
-      it 'has the correct errors', ->
-        expect(@model.errors).to.eql {}
-
-    describe 'given a subclass with faux error checking', ->
-      beforeEach ->
-        class FelixModel extends Model
+        class @FelixModel extends Model
           firstNameError: (value) -> null
 
-        @object = firstName: 'Ginny'
-        @model = new FelixModel @object
+      describe 'given attributes', ->
+        beforeEach ->
+          @attrs = firstName: 'Ginny'
+          @model = new @FelixModel @attrs
 
-      it 'has the correct attributes', ->
-        expect(@model.attributes).to.eql @object
+        it 'has the correct attributes', ->
+          expect(@model.attributes).to.eql @attrs
 
-      it 'has the correct errors', ->
-        expect(@model.errors).to.eql {}
+        it 'has the correct errors', ->
+          expect(@model.errors).to.eql {}
 
     describe 'given a model with a coersion', ->
       beforeEach ->
