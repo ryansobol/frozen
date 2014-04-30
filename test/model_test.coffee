@@ -24,21 +24,33 @@ describe 'Model', ->
       it 'has the correct errors', ->
         expect(@model.errors).to.eql {}
 
-    describe 'given a model with validation', ->
+    describe 'given a model with a known validator', ->
       beforeEach ->
         class @FelixModel extends Model
-          firstNameError: (value) -> 'Guess again' unless value is 'Felix'
+          validations:
+            firstName:
+              required: true
+
+      describe 'given no attributes', ->
+        beforeEach ->
+          @model = new @FelixModel()
+
+        it 'has the correct attributes', ->
+          expect(@model.attributes).to.eql {}
+
+        it 'has the correct errors', ->
+          expect(@model.errors).to.eql {}
 
       describe 'given invalid attributes', ->
         beforeEach ->
-          @attrs = firstName: 'Ginny'
+          @attrs = firstName: ''
           @model = new @FelixModel @attrs
 
         it 'has the correct attributes', ->
           expect(@model.attributes).to.eql @attrs
 
         it 'has the correct errors', ->
-          expect(@model.errors).to.eql { firstName: 'Guess again' }
+          expect(@model.errors).to.eql { firstName: 'Required' }
 
       describe 'given valid attributes', ->
         beforeEach ->
@@ -51,15 +63,17 @@ describe 'Model', ->
         it 'has the correct errors', ->
           expect(@model.errors).to.eql {}
 
-    describe 'given a model with faux error checking', ->
+    describe 'given a model with an unknown validator', ->
       beforeEach ->
-        class @FelixModel extends Model
-          firstNameError: (value) -> null
+        class @GinnyModel extends Model
+          validations:
+            firstName:
+              unknown: true
 
       describe 'given attributes', ->
         beforeEach ->
-          @attrs = firstName: 'Ginny'
-          @model = new @FelixModel @attrs
+          @attrs = firstName: ''
+          @model = new @GinnyModel @attrs
 
         it 'has the correct attributes', ->
           expect(@model.attributes).to.eql @attrs
@@ -157,95 +171,89 @@ describe 'Model', ->
       expect(@returns).to.eql @model.attributes
 
   describe 'validate', ->
-    describe 'given an invalid object', ->
+    describe 'given a model with validation', ->
       beforeEach ->
-        class LisaModel extends Model
-          validProps: ['firstName']
-          firstNameError: (value) -> 'Guess again' unless value is 'Lisa'
+        class @LisaModel extends Model
+          validations:
+            firstName:
+              required: true
 
-        @object = { firstName: 'Ginny' }
-        @model = new LisaModel @object
-        @returns = @model.validate()
+      describe 'given invalid attributes', ->
+        beforeEach ->
+          @attrs = { firstName: '' }
+          @model = new @LisaModel @attrs
+          @returns = @model.validate()
 
-      it 'has the correct attributes', ->
-        expect(@model.attributes).to.eql @object
+        it 'has the correct attributes', ->
+          expect(@model.attributes).to.eql @attrs
 
-      it 'has the correct errors', ->
-        expect(@model.errors).to.eql { firstName: 'Guess again' }
+        it 'has the correct errors', ->
+          expect(@model.errors).to.eql { firstName: 'Required' }
 
-      it 'has the correct validity', ->
-        expect(@model.isValid()).to.be false
+        it 'has the correct validity', ->
+          expect(@model.isValid()).to.be false
 
-      it 'returns an instance of itself', ->
-        expect(@returns instanceof Model).to.be true
+        it 'returns an instance of itself', ->
+          expect(@returns instanceof Model).to.be true
 
-      it 'returns the correct validity', ->
-        expect(@returns.isValid()).to.be false
+        it 'returns the correct validity', ->
+          expect(@returns.isValid()).to.be false
 
-      it 'returns the correct attributes', ->
-        expect(@returns.attributes).to.eql @object
+        it 'returns the correct attributes', ->
+          expect(@returns.attributes).to.eql @attrs
 
-      it 'returns the correct errors', ->
-        expect(@returns.errors).to.eql { firstName: 'Guess again' }
+        it 'returns the correct errors', ->
+          expect(@returns.errors).to.eql { firstName: 'Required' }
 
-    describe 'given a valid object', ->
-      beforeEach ->
-        class LisaModel extends Model
-          validProps: ['firstName']
-          firstNameError: (value) -> 'Guess again' unless value is 'Lisa'
+      describe 'given valid attributes', ->
+        beforeEach ->
+          @attrs = { firstName: 'Lisa' }
+          @model = new @LisaModel @attrs
+          @returns = @model.validate()
 
-        @object = { firstName: 'Lisa' }
-        @model = new LisaModel @object
-        @returns = @model.validate()
+        it 'has the correct attributes', ->
+          expect(@model.attributes).to.eql @attrs
 
-      it 'has the correct attributes', ->
-        expect(@model.attributes).to.eql @object
+        it 'has the correct errors', ->
+          expect(@model.errors).to.eql {}
 
-      it 'has the correct errors', ->
-        expect(@model.errors).to.eql {}
+        it 'has the correct validity', ->
+          expect(@model.isValid()).to.be true
 
-      it 'has the correct validity', ->
-        expect(@model.isValid()).to.be true
+        it 'returns an instance of itself', ->
+          expect(@returns instanceof Model).to.be true
 
-      it 'returns an instance of itself', ->
-        expect(@returns instanceof Model).to.be true
+        it 'returns the correct validity', ->
+          expect(@returns.isValid()).to.be true
 
-      it 'returns the correct validity', ->
-        expect(@returns.isValid()).to.be true
+        it 'returns the correct attributes', ->
+          expect(@returns.attributes).to.eql @attrs
 
-      it 'returns the correct attributes', ->
-        expect(@returns.attributes).to.eql @object
+        it 'returns the correct errors', ->
+          expect(@returns.errors).to.eql {}
 
-      it 'returns the correct errors', ->
-        expect(@returns.errors).to.eql {}
+      describe 'given no attributes', ->
+        beforeEach ->
+          @model = new @LisaModel()
+          @returns = @model.validate()
 
-    describe 'given a blank object', ->
-      beforeEach ->
-        class LisaModel extends Model
-          validProps: ['firstName']
-          firstNameError: (value) -> 'Guess again' unless value is 'Lisa'
+        it 'has the correct attributes', ->
+          expect(@model.attributes).to.eql {}
 
-        @object = {}
-        @model = new LisaModel @object
-        @returns = @model.validate()
+        it 'has the correct errors', ->
+          expect(@model.errors).to.eql {}
 
-      it 'has the correct attributes', ->
-        expect(@model.attributes).to.eql @object
+        it 'has the correct validity', ->
+          expect(@model.isValid()).to.be true
 
-      it 'has the correct errors', ->
-        expect(@model.errors).to.eql {}
+        it 'returns an instance of itself', ->
+          expect(@returns instanceof Model).to.be true
 
-      it 'has the correct validity', ->
-        expect(@model.isValid()).to.be true
+        it 'returns the correct validity', ->
+          expect(@returns.isValid()).to.be false
 
-      it 'returns an instance of itself', ->
-        expect(@returns instanceof Model).to.be true
+        it 'returns the correct attributes', ->
+          expect(@returns.attributes).to.eql { firstName: '' }
 
-      it 'returns the correct validity', ->
-        expect(@returns.isValid()).to.be false
-
-      it 'returns the correct attributes', ->
-        expect(@returns.attributes).to.eql { firstName: '' }
-
-      it 'returns the correct errors', ->
-        expect(@returns.errors).to.eql { firstName: 'Guess again' }
+        it 'returns the correct errors', ->
+          expect(@returns.errors).to.eql { firstName: 'Required' }

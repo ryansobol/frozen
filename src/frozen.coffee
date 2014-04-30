@@ -1,3 +1,7 @@
+class Validation
+  @required: (prop, value, opts, model) ->
+    opts.message ? 'Required' if value.trim() is ''
+
 extend = (to, froms...) ->
   for from in froms
     to[prop] = value for prop, value of from when from.hasOwnProperty(prop)
@@ -22,9 +26,19 @@ class Model
 
     @errors = {}
 
-    for prop, value of @attributes
-      error = @["#{prop}Error"]?(value)
-      @errors[prop] = error if error?
+    for prop, validation of @validations
+      value = @attributes[prop]
+      continue unless value?
+
+      for type, options of validation
+        validator = Validation[type]
+        continue unless validator?
+
+        error = validator(prop, value, options, @)
+        continue unless error?
+
+        @errors[prop] = error
+        break
 
     Object.freeze(@errors)
 
@@ -39,11 +53,9 @@ class Model
   toJSON: ->
     @attributes
 
-  validProps: []
-
   validate: ->
     attributes = extend({}, @attributes)
-    attributes[prop] ?= '' for prop in @validProps
+    attributes[prop] ?= '' for prop of @validations
     new @constructor(attributes)
 
   isValid: ->
@@ -120,7 +132,10 @@ class Collection
   isValid: ->
     @models.reduce ((a, e) -> a and e.isValid()), true
 
-Frozen = { Model: Model, Collection: Collection }
+Frozen =
+  Model: Model
+  Collection: Collection
+  Validation: Validation
 
 if module?
   module.exports = Frozen

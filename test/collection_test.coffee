@@ -229,114 +229,167 @@ describe 'Collection', ->
       expect(@returns.length).to.eql 2
 
   describe 'validate', ->
-    describe 'given an invalid model', ->
+    describe 'given a collection and a model with validations', ->
       beforeEach ->
         class FrankModel extends Model
-          validProps: ['firstName']
-          firstNameError: (value) -> 'Guess again' unless value is 'Frank'
+          validations:
+            firstName:
+              required: true
 
         class FrankCollection extends Collection
           model: FrankModel
 
-        @model = new FrankModel firstName: 'Maria'
-        @collection = new FrankCollection @model
-        @returns = @collection.validate()
+        @FrankModel = FrankModel
+        @FrankCollection = FrankCollection
 
-      it 'has the correct models', ->
-        expect(@collection.models).to.eql [@model]
+      describe 'given an invalid model', ->
+        beforeEach ->
+          @model = new @FrankModel firstName: ''
+          @collection = new @FrankCollection @model
+          @returns = @collection.validate()
 
-      it 'has the correct length', ->
-        expect(@collection.length).to.eql 1
+        it 'has the correct models', ->
+          expect(@collection.models).to.eql [@model]
 
-      it 'has the correct validity', ->
-        expect(@collection.isValid()).to.be false
+        it 'has the correct length', ->
+          expect(@collection.length).to.eql 1
 
-      it 'returns an instance of itself', ->
-        expect(@returns instanceof Collection).to.be true
+        it 'has the correct validity', ->
+          expect(@collection.isValid()).to.be false
 
-      it 'returns a different object', ->
-        expect(@returns).not.to.be @collection
+        it 'returns an instance of itself', ->
+          expect(@returns instanceof Collection).to.be true
 
-      it 'returns the correct models', ->
-        expect(@returns.models).to.eql [@model.validate()]
+        it 'returns a different object', ->
+          expect(@returns).not.to.be @collection
 
-      it 'returns the correct length', ->
-        expect(@returns.length).to.eql 1
+        it 'returns the correct models', ->
+          expect(@returns.models).to.eql [@model.validate()]
 
-      it 'returns the correct validity', ->
-        expect(@returns.isValid()).to.be false
+        it 'returns the correct length', ->
+          expect(@returns.length).to.eql 1
 
-    describe 'given a valid model', ->
-      beforeEach ->
-        class FrankModel extends Model
-          validProps: ['firstName']
-          firstNameError: (value) -> 'Guess again' unless value is 'Frank'
+        it 'returns the correct validity', ->
+          expect(@returns.isValid()).to.be false
 
-        class FrankCollection extends Collection
-          model: FrankModel
+      describe 'given a valid model', ->
+        beforeEach ->
+          @model = new @FrankModel firstName: 'Frank'
+          @collection = new @FrankCollection @model
+          @returns = @collection.validate()
 
-        @model = new FrankModel firstName: 'Frank'
-        @collection = new FrankCollection @model
-        @returns = @collection.validate()
+        it 'has the correct models', ->
+          expect(@collection.models).to.eql [@model]
 
-      it 'has the correct models', ->
-        expect(@collection.models).to.eql [@model]
+        it 'has the correct length', ->
+          expect(@collection.length).to.eql 1
 
-      it 'has the correct length', ->
-        expect(@collection.length).to.eql 1
+        it 'has the correct validity', ->
+          expect(@collection.isValid()).to.be true
 
-      it 'has the correct validity', ->
-        expect(@collection.isValid()).to.be true
+        it 'returns an instance of itself', ->
+          expect(@returns instanceof Collection).to.be true
 
-      it 'returns an instance of itself', ->
-        expect(@returns instanceof Collection).to.be true
+        it 'returns a different object', ->
+          expect(@returns).not.to.be @collection
 
-      it 'returns a different object', ->
-        expect(@returns).not.to.be @collection
+        it 'returns the correct models', ->
+          expect(@returns.models).to.eql [@model.validate()]
 
-      it 'returns the correct models', ->
-        expect(@returns.models).to.eql [@model.validate()]
+        it 'returns the correct length', ->
+          expect(@returns.length).to.eql 1
 
-      it 'returns the correct length', ->
-        expect(@returns.length).to.eql 1
+        it 'returns the correct validity', ->
+          expect(@returns.isValid()).to.be true
 
-      it 'returns the correct validity', ->
-        expect(@returns.isValid()).to.be true
+      describe 'given an incomplete model', ->
+        beforeEach ->
+          @model = new @FrankModel()
+          @collection = new @FrankCollection @model
+          @returns = @collection.validate()
 
-    describe 'given both invalid and valid models', ->
-      beforeEach ->
-        class FrankModel extends Model
-          validProps: ['firstName']
-          firstNameError: (value) -> 'Guess again' unless value is 'Frank'
+        it 'has the correct models', ->
+          expect(@collection.models).to.eql [@model]
 
-        class FrankCollection extends Collection
-          model: FrankModel
+        it 'has the correct length', ->
+          expect(@collection.length).to.eql 1
 
-        @model0 = new FrankModel firstName: 'Maria'
-        @model1 = new FrankModel firstName: 'Frank'
-        @collection = new FrankCollection [@model0, @model1]
-        @returns = @collection.validate()
+        it 'has the correct validity', ->
+          expect(@collection.isValid()).to.be true
 
-      it 'has the correct models', ->
-        expect(@collection.models).to.eql [@model0, @model1]
+        it 'returns an instance of itself', ->
+          expect(@returns instanceof Collection).to.be true
 
-      it 'has the correct length', ->
-        expect(@collection.length).to.eql 2
+        it 'returns a different object', ->
+          expect(@returns).not.to.be @collection
 
-      it 'has the correct validity', ->
-        expect(@collection.isValid()).to.be false
+        it 'returns the correct models', ->
+          expect(@returns.models).to.eql [@model.validate()]
 
-      it 'returns an instance of itself', ->
-        expect(@returns instanceof Collection).to.be true
+        it 'returns the correct length', ->
+          expect(@returns.length).to.eql 1
 
-      it 'returns a different object', ->
-        expect(@returns).not.to.be @collection
+        it 'returns the correct validity', ->
+          expect(@returns.isValid()).to.be false
 
-      it 'returns the correct models', ->
-        expect(@returns.models).to.eql [@model0.validate(), @model1.validate()]
+      describe 'given both invalid and valid models', ->
+        beforeEach ->
+          @model0 = new @FrankModel firstName: ''
+          @model1 = new @FrankModel firstName: 'Frank'
+          @collection = new @FrankCollection [@model0, @model1]
+          @returns = @collection.validate()
 
-      it 'returns the correct length', ->
-        expect(@returns.length).to.eql 2
+        it 'has the correct models', ->
+          expect(@collection.models).to.eql [@model0, @model1]
 
-      it 'returns the correct validity', ->
-        expect(@returns.isValid()).to.be false
+        it 'has the correct length', ->
+          expect(@collection.length).to.eql 2
+
+        it 'has the correct validity', ->
+          expect(@collection.isValid()).to.be false
+
+        it 'returns an instance of itself', ->
+          expect(@returns instanceof Collection).to.be true
+
+        it 'returns a different object', ->
+          expect(@returns).not.to.be @collection
+
+        it 'returns the correct models', ->
+          expect(@returns.models).to.eql [@model0.validate(), @model1.validate()]
+
+        it 'returns the correct length', ->
+          expect(@returns.length).to.eql 2
+
+        it 'returns the correct validity', ->
+          expect(@returns.isValid()).to.be false
+
+      describe 'given both incomplete and valid models', ->
+        beforeEach ->
+          @model0 = new @FrankModel()
+          @model1 = new @FrankModel firstName: 'Frank'
+          @collection = new @FrankCollection [@model0, @model1]
+          @returns = @collection.validate()
+
+        it 'has the correct models', ->
+          expect(@collection.models).to.eql [@model0, @model1]
+
+        it 'has the correct length', ->
+          expect(@collection.length).to.eql 2
+
+        it 'has the correct validity', ->
+          expect(@collection.isValid()).to.be true
+
+        it 'returns an instance of itself', ->
+          expect(@returns instanceof Collection).to.be true
+
+        it 'returns a different object', ->
+          expect(@returns).not.to.be @collection
+
+        it 'returns the correct models', ->
+          expect(@returns.models).to.eql [@model0.validate(), @model1.validate()]
+
+        it 'returns the correct length', ->
+          expect(@returns.length).to.eql 2
+
+        it 'returns the correct validity', ->
+          expect(@returns.isValid()).to.be false
