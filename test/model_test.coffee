@@ -91,7 +91,7 @@ describe 'Model', ->
         @AddressModel = AddressModel
         @PersonModel = PersonModel
 
-      describe 'given uncoersed attributes', ->
+      describe 'given coerseable attributes', ->
         beforeEach ->
           @address = zipcode: '90120'
           @person = new @PersonModel address: @address
@@ -154,6 +154,38 @@ describe 'Model', ->
 
     it 'returns the correct errors', ->
       expect(@returns.errors).to.eql {}
+
+    describe 'given a model with coersion', ->
+      beforeEach ->
+        class AddressModel extends Model
+        class PersonModel extends Model
+          coersions:
+            address: AddressModel
+
+        @AddressModel = AddressModel
+        @PersonModel = PersonModel
+
+      describe 'given coerseable attributes', ->
+        beforeEach ->
+          @address = { zipcode: '90210' }
+          @person = new @PersonModel()
+          @returns = @person.set('address', @address)
+
+        it 'has the correct attributes', ->
+          expect(@person.attributes).to.eql {}
+
+        it 'has the correct errors', ->
+          expect(@person.errors).to.eql {}
+
+        it 'returns an instance of itself', ->
+          expect(@returns instanceof Model).to.be true
+
+        it 'returns the correct attributes', ->
+          expected = { address: new @AddressModel @address }
+          expect(@returns.attributes).to.eql
+
+        it 'returns the correct errors', ->
+          expect(@returns.errors).to.eql {}
 
   describe 'toJSON', ->
     beforeEach ->
