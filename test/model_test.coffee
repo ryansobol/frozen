@@ -1,473 +1,596 @@
 expect = require 'expect.js'
 {Model} = require '../src/frozen'
 
+class Address extends Model
+  validations:
+    zipcode:
+      required: true
+
+class Person extends Model
+  coersions:
+    address: Address
+
+  validations:
+    firstName:
+      required: true
+      unknown: true
+    address:
+      coersion: true
+
 describe 'Model', ->
   describe 'constructor', ->
     describe 'given no attributes', ->
       beforeEach ->
-        @model = new Model()
+        @person = new Person()
+        @validated = @person.validate()
+        @json = @person.toJSON()
 
       it 'has the correct attributes', ->
-        expect(@model.attributes).to.eql {}
+        expect(@person.attributes).to.eql {}
+
+      it 'has the correct options', ->
+        expect(@person.options).to.eql {}
 
       it 'has the correct errors', ->
-        expect(@model.errors).to.eql {}
+        expect(@person.errors).to.eql {}
 
-    describe 'given attributes', ->
+      it 'has the correct validity', ->
+        expect(@person.isValid()).to.be true
+
+      it 'returns the correct validated attributes', ->
+        expect(@validated.attributes).to.eql {}
+
+      it 'returns the correct validated errors', ->
+        expect(@validated.errors).to.eql { firstName: 'Required' }
+
+      it 'returns the correct validated options', ->
+        expect(@validated.options).to.eql { validation: 'force' }
+
+      it 'returns the correct validated validity', ->
+        expect(@validated.isValid()).to.be false
+
+      it 'returns the correct JSON', ->
+        expect(@json).to.eql {}
+
+    describe 'given no attributes and force validation', ->
       beforeEach ->
-        @attrs = firstName: 'Jim'
-        @model = new Model @attrs
+        @person = new Person({}, validation: 'force')
+        @validated = @person.validate()
+        @json = @person.toJSON()
 
       it 'has the correct attributes', ->
-        expect(@model.attributes).to.eql @attrs
+        expect(@person.attributes).to.eql {}
+
+      it 'has the correct options', ->
+        expect(@person.options).to.eql { validation: 'force' }
 
       it 'has the correct errors', ->
-        expect(@model.errors).to.eql {}
+        expect(@person.errors).to.eql { firstName: 'Required' }
 
-    describe 'given a model with a known validator', ->
+      it 'has the correct validity', ->
+        expect(@person.isValid()).to.be false
+
+      it 'returns the correct validated attributes', ->
+        expect(@validated.attributes).to.eql {}
+
+      it 'returns the correct validated errors', ->
+        expect(@validated.errors).to.eql { firstName: 'Required' }
+
+      it 'returns the correct validated options', ->
+        expect(@validated.options).to.eql { validation: 'force' }
+
+      it 'returns the correct validated validity', ->
+        expect(@validated.isValid()).to.be false
+
+      it 'returns the correct JSON', ->
+        expect(@json).to.eql {}
+
+    describe 'given valid attributes', ->
       beforeEach ->
-        class @FelixModel extends Model
-          validations:
-            firstName:
-              required: true
+        @attrs = { firstName: 'Jim' }
+        @person = new Person(@attrs)
+        @validated = @person.validate()
+        @json = @person.toJSON()
 
-      describe 'given no attributes', ->
-        beforeEach ->
-          @model = new @FelixModel()
+      it 'has the correct attributes', ->
+        expect(@person.attributes).to.eql @attrs
 
-        it 'has the correct attributes', ->
-          expect(@model.attributes).to.eql {}
+      it 'has the correct options', ->
+        expect(@person.options).to.eql {}
 
-        it 'has the correct errors', ->
-          expect(@model.errors).to.eql {}
+      it 'has the correct errors', ->
+        expect(@person.errors).to.eql {}
 
-      describe 'given invalid attributes', ->
-        beforeEach ->
-          @attrs = firstName: null
-          @model = new @FelixModel @attrs
+      it 'has the correct validity', ->
+        expect(@person.isValid()).to.be true
 
-        it 'has the correct attributes', ->
-          expect(@model.attributes).to.eql @attrs
+      it 'returns the correct validated attributes', ->
+        expect(@validated.attributes).to.eql @attrs
 
-        it 'has the correct errors', ->
-          expect(@model.errors).to.eql { firstName: 'Required' }
+      it 'returns the correct validated options', ->
+        expect(@validated.options).to.eql { validation: 'force' }
 
-      describe 'given valid attributes', ->
-        beforeEach ->
-          @attrs = firstName: 'Felix'
-          @model = new @FelixModel @attrs
+      it 'returns the correct validated errors', ->
+        expect(@validated.errors).to.eql {}
 
-        it 'has the correct attributes', ->
-          expect(@model.attributes).to.eql @attrs
+      it 'returns the correct validated validity', ->
+        expect(@validated.isValid()).to.be true
 
-        it 'has the correct errors', ->
-          expect(@model.errors).to.eql {}
+      it 'returns the correct JSON', ->
+        expect(@json).to.eql @person.attributes
 
-    describe 'given a model with an unknown validator', ->
+    describe 'given invalid attributes', ->
       beforeEach ->
-        class @GinnyModel extends Model
-          validations:
-            firstName:
-              unknown: true
+        @attrs = { firstName: '' }
+        @person = new Person(@attrs)
+        @validated = @person.validate()
+        @json = @person.toJSON()
 
-      describe 'given attributes', ->
-        beforeEach ->
-          @attrs = firstName: null
-          @model = new @GinnyModel @attrs
+      it 'has the correct attributes', ->
+        expect(@person.attributes).to.eql @attrs
 
-        it 'has the correct attributes', ->
-          expect(@model.attributes).to.eql @attrs
+      it 'has the correct options', ->
+        expect(@person.options).to.eql {}
 
-        it 'has the correct errors', ->
-          expect(@model.errors).to.eql {}
+      it 'has the correct errors', ->
+        expect(@person.errors).to.eql { firstName: 'Required' }
 
-    describe 'given a model with a coersion', ->
+      it 'has the correct validity', ->
+        expect(@person.isValid()).to.be false
+
+      it 'returns the correct validated attributes', ->
+        expect(@validated.attributes).to.eql @attrs
+
+      it 'returns the correct validated options', ->
+        expect(@validated.options).to.eql { validation: 'force' }
+
+      it 'returns the correct validated errors', ->
+        expect(@validated.errors).to.eql { firstName: 'Required' }
+
+      it 'returns the correct validated validity', ->
+        expect(@validated.isValid()).to.be false
+
+      it 'returns the correct JSON', ->
+        expect(@json).to.eql @person.attributes
+
+    describe 'given no coerseable attributes', ->
       beforeEach ->
-        class AddressModel extends Model
-        class PersonModel extends Model
-          coersions:
-            address: AddressModel
+        @attrs = { firstName: 'Sierra', address: {} }
+        @person = new Person(@attrs)
+        @validated = @person.validate()
+        @json = @person.toJSON()
 
-        @AddressModel = AddressModel
-        @PersonModel = PersonModel
+      it 'has the correct attributes', ->
+        expected = { firstName: 'Sierra', address: new Address() }
+        expect(@person.attributes).to.eql expected
 
-      describe 'given coerseable attributes', ->
-        beforeEach ->
-          @address = zipcode: '90120'
-          @person = new @PersonModel address: @address
+      it 'has the correct options', ->
+        expect(@person.options).to.eql {}
 
-        it 'has the correct attribute', ->
-          expected = { address: new @AddressModel @address }
-          expect(@person.attributes).to.eql expected
+      it 'has the correct errors', ->
+        expect(@person.errors).to.eql {}
 
-        it 'has the correct errors', ->
-          expect(@model.errors).to.eql {}
+      it 'has the correct validity', ->
+        expect(@person.isValid()).to.be true
 
-      describe 'given coersed attributes', ->
-        beforeEach ->
-          @attrs = { address: new @AddressModel { zipcode: '90120' } }
-          @person = new @PersonModel @attrs
+      it 'returns the correct validated attributes', ->
+        expected =
+          firstName: 'Sierra'
+          address: new Address({}, validation: 'force')
+        expect(@validated.attributes).to.eql expected
 
-        it 'has the correct attribute', ->
-          expect(@person.attributes).to.eql @attrs
+      it 'returns the correct validated options', ->
+        expect(@validated.options).to.eql { validation: 'force' }
 
-        it 'has the correct errors', ->
-          expect(@model.errors).to.eql {}
+      it 'returns the correct validated errors', ->
+        expect(@validated.errors).to.eql { address: { zipcode: 'Required' } }
 
-      describe 'given no attributes', ->
-        beforeEach ->
-          @person = new @PersonModel()
+      it 'returns the correct validated validity', ->
+        expect(@validated.isValid()).to.be false
 
-        it 'has the correct attribute', ->
-          expect(@person.attributes).to.eql {}
+      it 'returns the correct JSON', ->
+        expect(@json).to.eql @attrs
 
-        it 'has the correct errors', ->
-          expect(@model.errors).to.eql {}
+    describe 'given no coerseable attributes and force validation', ->
+      beforeEach ->
+        @attrs = { firstName: 'Sierra', address: {} }
+        @person = new Person(@attrs, validation: 'force')
+        @validated = @person.validate()
+        @json = @person.toJSON()
+
+      it 'has the correct attributes', ->
+        expected =
+          firstName: 'Sierra'
+          address: new Address({}, validation: 'force')
+        expect(@person.attributes).to.eql expected
+
+      it 'has the correct options', ->
+        expect(@person.options).to.eql { validation: 'force' }
+
+      it 'has the correct errors', ->
+        expect(@person.errors).to.eql { address: { zipcode: 'Required' } }
+
+      it 'has the correct validity', ->
+        expect(@person.isValid()).to.be false
+
+      it 'returns the correct validated attributes', ->
+        expected =
+          firstName: 'Sierra'
+          address: new Address({}, validation: 'force')
+        expect(@validated.attributes).to.eql expected
+
+      it 'returns the correct validated options', ->
+        expect(@validated.options).to.eql { validation: 'force' }
+
+      it 'returns the correct validated errors', ->
+        expect(@validated.errors).to.eql { address: { zipcode: 'Required' } }
+
+      it 'returns the correct validated validity', ->
+        expect(@validated.isValid()).to.be false
+
+      it 'returns the correct JSON', ->
+        expect(@json).to.eql @attrs
+
+    describe 'given valid coerseable attributes', ->
+      beforeEach ->
+        @attrs = { zipcode: '90120' }
+        @person = new Person(firstName: 'Sierra', address: @attrs)
+        @validated = @person.validate()
+        @json = @person.toJSON()
+
+      it 'has the correct attribute', ->
+        expected = { firstName: 'Sierra', address: new Address(@attrs) }
+        expect(@person.attributes).to.eql expected
+
+      it 'has the correct options', ->
+        expect(@person.options).to.eql {}
+
+      it 'has the correct errors', ->
+        expect(@person.errors).to.eql {}
+
+      it 'has the correct validity', ->
+        expect(@person.isValid()).to.be true
+
+      it 'returns the correct validated attributes', ->
+        expected =
+          firstName: 'Sierra'
+          address: new Address(@attrs, validation: 'force')
+        expect(@validated.attributes).to.eql expected
+
+      it 'returns the correct validated options', ->
+        expect(@validated.options).to.eql { validation: 'force' }
+
+      it 'returns the correct validated errors', ->
+        expect(@validated.errors).to.eql {}
+
+      it 'returns the correct validated validity', ->
+        expect(@validated.isValid()).to.be true
+
+      it 'returns the correct JSON', ->
+        expect(@json).to.eql { firstName: 'Sierra', address: @attrs }
+
+    describe 'given invalid coerseable attributes', ->
+      beforeEach ->
+        @attrs = { zipcode: '' }
+        @person = new Person(firstName: 'Sierra', address: @attrs)
+        @validated = @person.validate()
+        @json = @person.toJSON()
+
+      it 'has the correct attributes', ->
+        expected = { firstName: 'Sierra', address: new Address(@attrs) }
+        expect(@person.attributes).to.eql expected
+
+      it 'has the correct options', ->
+        expect(@person.options).to.eql {}
+
+      it 'has the correct errors', ->
+        expect(@person.errors).to.eql { address: { zipcode: 'Required' } }
+
+      it 'has the correct validity', ->
+        expect(@person.isValid()).to.be false
+
+      it 'returns the correct validated attributes', ->
+        expected =
+          firstName: 'Sierra'
+          address: new Address(@attrs, validation: 'force')
+        expect(@validated.attributes).to.eql expected
+
+      it 'returns the correct validated options', ->
+        expect(@validated.options).to.eql { validation: 'force' }
+
+      it 'returns the correct validated errors', ->
+        expect(@validated.errors).to.eql { address: { zipcode: 'Required' } }
+
+      it 'returns the correct validated validity', ->
+        expect(@validated.isValid()).to.be false
+
+      it 'returns the correct JSON', ->
+        expect(@json).to.eql { firstName: 'Sierra', address: @attrs }
+
+    describe 'given no coersed attributes', ->
+      beforeEach ->
+        @attrs = { firstName: 'Sierra', address: new Address() }
+        @person = new Person(@attrs)
+        @validated = @person.validate()
+        @json = @person.toJSON()
+
+      it 'has the correct attributes', ->
+        expected = { firstName: 'Sierra', address: new Address() }
+        expect(@person.attributes).to.eql expected
+
+      it 'has the correct options', ->
+        expect(@person.options).to.eql {}
+
+      it 'has the correct errors', ->
+        expect(@person.errors).to.eql {}
+
+      it 'has the correct validity', ->
+        expect(@person.isValid()).to.be true
+
+      it 'returns the correct validated attributes', ->
+        expected =
+          firstName: 'Sierra'
+          address: new Address({}, validation: 'force')
+        expect(@validated.attributes).to.eql expected
+
+      it 'returns the correct validated options', ->
+        expect(@validated.options).to.eql { validation: 'force' }
+
+      it 'returns the correct validated errors', ->
+        expect(@validated.errors).to.eql { address: { zipcode: 'Required' } }
+
+      it 'returns the correct validated validity', ->
+        expect(@validated.isValid()).to.be false
+
+      it 'returns the correct JSON', ->
+        expect(@json).to.eql { firstName: 'Sierra', address: {} }
+
+    describe 'given no coersed attributes and force validation', ->
+      beforeEach ->
+        @attrs = { firstName: 'Sierra', address: new Address() }
+        @person = new Person(@attrs, validation: 'force')
+        @validated = @person.validate()
+        @json = @person.toJSON()
+
+      it 'has the correct attributes', ->
+        expected =
+          firstName: 'Sierra'
+          address: new Address({}, validation: 'force')
+        expect(@person.attributes).to.eql expected
+
+      it 'has the correct options', ->
+        expect(@person.options).to.eql { validation: 'force' }
+
+      it 'has the correct errors', ->
+        expect(@person.errors).to.eql { address: { zipcode: 'Required' } }
+
+      it 'has the correct validity', ->
+        expect(@person.isValid()).to.be false
+
+      it 'returns the correct validated attributes', ->
+        expected =
+          firstName: 'Sierra'
+          address: new Address({}, validation: 'force')
+        expect(@validated.attributes).to.eql expected
+
+      it 'returns the correct validated options', ->
+        expect(@validated.options).to.eql { validation: 'force' }
+
+      it 'returns the correct validated errors', ->
+        expect(@validated.errors).to.eql { address: { zipcode: 'Required' } }
+
+      it 'returns the correct validated validity', ->
+        expect(@validated.isValid()).to.be false
+
+      it 'returns the correct JSON', ->
+        expect(@json).to.eql { firstName: 'Sierra', address: {} }
+
+    describe 'given valid coersed attributes', ->
+      beforeEach ->
+        @attrs = { zipcode: '90120' }
+        @person = new Person(firstName: 'Sierra', address: new Address(@attrs))
+        @validated = @person.validate()
+        @json = @person.toJSON()
+
+      it 'has the correct attribute', ->
+        expected = { firstName: 'Sierra', address: new Address(@attrs) }
+        expect(@person.attributes).to.eql expected
+
+      it 'has the correct options', ->
+        expect(@person.options).to.eql {}
+
+      it 'has the correct errors', ->
+        expect(@person.errors).to.eql {}
+
+      it 'has the correct validity', ->
+        expect(@person.isValid()).to.be true
+
+      it 'returns the correct validated attributes', ->
+        expected =
+          firstName: 'Sierra'
+          address: new Address(@attrs, validation: 'force')
+        expect(@validated.attributes).to.eql expected
+
+      it 'returns the correct validated options', ->
+        expect(@validated.options).to.eql { validation: 'force' }
+
+      it 'returns the correct validated errors', ->
+        expect(@validated.errors).to.eql {}
+
+      it 'returns the correct validated validity', ->
+        expect(@validated.isValid()).to.be true
+
+      it 'returns the correct JSON', ->
+        expect(@json).to.eql { firstName: 'Sierra', address: @attrs }
+
+    describe 'given invalid coersed attributes', ->
+      beforeEach ->
+        @attrs = { zipcode: '' }
+        @person = new Person(firstName: 'Sierra', address: new Address(@attrs))
+        @validated = @person.validate()
+        @json = @person.toJSON()
+
+      it 'has the correct attribute', ->
+        expected = { firstName: 'Sierra', address: new Address(@attrs) }
+        expect(@person.attributes).to.eql expected
+
+      it 'has the correct options', ->
+        expect(@person.options).to.eql {}
+
+      it 'has the correct errors', ->
+        expect(@person.errors).to.eql { address: { zipcode: 'Required' } }
+
+      it 'has the correct validity', ->
+        expect(@person.isValid()).to.be false
+
+      it 'returns the correct validated attributes', ->
+        expected =
+          firstName: 'Sierra'
+          address: new Address(@attrs, validation: 'force')
+        expect(@validated.attributes).to.eql expected
+
+      it 'returns the correct validated options', ->
+        expect(@validated.options).to.eql { validation: 'force' }
+
+      it 'returns the correct validated errors', ->
+        expect(@validated.errors).to.eql { address: { zipcode: 'Required' } }
+
+      it 'returns the correct validated validity', ->
+        expect(@validated.isValid()).to.be false
+
+      it 'returns the correct JSON', ->
+        expect(@json).to.eql { firstName: 'Sierra', address: @attrs }
 
   describe 'get', ->
     describe 'given attributes', ->
       beforeEach ->
-        @model = new Model firstName: 'Olivia'
+        @person = new Person(firstName: 'Olivia')
 
       it 'gets the correct value of a known property', ->
-        expect(@model.get('firstName')).to.eql 'Olivia'
+        expect(@person.get('firstName')).to.eql 'Olivia'
 
       it 'gets the correct value of an unknown property', ->
-        expect(@model.get('lastName')).to.be undefined
+        expect(@person.get('lastName')).to.be undefined
 
   describe 'set', ->
     describe 'given no attributes', ->
       beforeEach ->
-        @model = new Model()
-        @returns = @model.set('firstName', 'Amy')
+        @person = new Person()
+        @returns = @person.set()
 
-      it 'has the correct attributes', ->
-        expect(@model.attributes).to.eql {}
-
-      it 'has the correct errors', ->
-        expect(@model.errors).to.eql {}
-
-      it 'returns an instance of itself', ->
-        expect(@returns instanceof Model).to.be true
+      it 'returns the correct object', ->
+        expect(@returns).not.to.be @person
 
       it 'returns the correct attributes', ->
-        expect(@returns.attributes).to.eql firstName: 'Amy'
+        expect(@returns.attributes).to.eql {}
+
+      it 'returns the correct options', ->
+        expect(@returns.options).to.eql {}
 
       it 'returns the correct errors', ->
         expect(@returns.errors).to.eql {}
 
-    describe 'given attributes', ->
+      it 'returns the correct validity', ->
+        expect(@returns.isValid()).to.be true
+
+    describe 'given no attributes and force validation', ->
       beforeEach ->
-        @attrs = { firstName: 'Jolene' }
-        @model = new Model @attrs
-        @returns = @model.set('firstName', 'Amy')
+        @person = new Person()
+        @returns = @person.set({}, validation: 'force')
 
-      it 'has the correct attributes', ->
-        expect(@model.attributes).to.eql @attrs
-
-      it 'has the correct errors', ->
-        expect(@model.errors).to.eql {}
-
-      it 'returns an instance of itself', ->
-        expect(@returns instanceof Model).to.be true
+      it 'returns the correct object', ->
+        expect(@returns).not.to.be @person
 
       it 'returns the correct attributes', ->
-        expect(@returns.attributes).to.eql firstName: 'Amy'
+        expect(@returns.attributes).to.eql {}
+
+      it 'returns the correct options', ->
+        expect(@returns.options).to.eql { validation: 'force' }
+
+      it 'returns the correct errors', ->
+        expect(@returns.errors).to.eql { firstName: 'Required' }
+
+      it 'returns the correct validity', ->
+        expect(@returns.isValid()).to.be false
+
+    describe 'given valid attributes', ->
+      beforeEach ->
+        @person = new Person()
+        @returns = @person.set(firstName: 'Amy')
+
+      it 'returns the correct object', ->
+        expect(@returns).not.to.be @person
+
+      it 'returns the correct attributes', ->
+        expect(@returns.attributes).to.eql { firstName: 'Amy' }
+
+      it 'returns the correct options', ->
+        expect(@returns.options).to.eql {}
 
       it 'returns the correct errors', ->
         expect(@returns.errors).to.eql {}
 
-    describe 'given a model with coersion', ->
+      it 'returns the correct validity', ->
+        expect(@returns.isValid()).to.be true
+
+    describe 'given invalid attributes', ->
       beforeEach ->
-        class AddressModel extends Model
-        class PersonModel extends Model
-          coersions:
-            address: AddressModel
+        @person = new Person()
+        @returns = @person.set(firstName: '')
 
-        @AddressModel = AddressModel
-        @PersonModel = PersonModel
-
-      describe 'given coerseable attributes', ->
-        beforeEach ->
-          @address = { zipcode: '90210' }
-          @person = new @PersonModel()
-          @returns = @person.set('address', @address)
-
-        it 'has the correct attributes', ->
-          expect(@person.attributes).to.eql {}
-
-        it 'has the correct errors', ->
-          expect(@person.errors).to.eql {}
-
-        it 'returns an instance of itself', ->
-          expect(@returns instanceof Model).to.be true
-
-        it 'returns the correct attributes', ->
-          expected = { address: new @AddressModel @address }
-          expect(@returns.attributes).to.eql
-
-        it 'returns the correct errors', ->
-          expect(@returns.errors).to.eql {}
-
-  describe 'toJSON', ->
-    describe 'given no attributes', ->
-      beforeEach ->
-        @model = new Model()
-        @returns = @model.toJSON()
-
-      it 'has the correct attributes', ->
-        expect(@model.attributes).to.eql {}
-
-      it 'has the correct errors', ->
-        expect(@model.errors).to.eql {}
+      it 'returns the correct object', ->
+        expect(@returns).not.to.be @person
 
       it 'returns the correct attributes', ->
-        expect(@returns).to.eql {}
+        expect(@returns.attributes).to.eql { firstName: '' }
 
-    describe 'given attributes', ->
+      it 'returns the correct options', ->
+        expect(@returns.options).to.eql {}
+
+      it 'returns the correct errors', ->
+        expect(@returns.errors).to.eql { firstName: 'Required' }
+
+      it 'returns the correct validity', ->
+        expect(@returns.isValid()).to.be false
+
+    describe 'given valid coerseable attributes', ->
       beforeEach ->
-        @attrs = firstName: 'David'
-        @model = new Model @attrs
-        @returns = @model.toJSON()
+        @attrs = { zipcode: '90210' }
+        @person = new Person()
+        @returns = @person.set(address: @attrs)
 
-      it 'has the correct attributes', ->
-        expect(@model.attributes).to.eql @attrs
-
-      it 'has the correct errors', ->
-        expect(@model.errors).to.eql {}
+      it 'returns the correct object', ->
+        expect(@returns).not.to.be @person
 
       it 'returns the correct attributes', ->
-        expect(@returns).to.eql @model.attributes
+        expect(@returns.attributes).to.eql { address: new Address(@attrs) }
 
-    describe 'given a model with coersion', ->
+      it 'returns the correct options', ->
+        expect(@returns.options).to.eql {}
+
+      it 'returns the correct errors', ->
+        expect(@returns.errors).to.eql {}
+
+      it 'returns the correct validity', ->
+        expect(@returns.isValid()).to.be true
+
+    describe 'given valid coersed attributes', ->
       beforeEach ->
-        class AddressModel extends Model
-        class PersonModel extends Model
-          coersions:
-            address: AddressModel
+        @attrs = { zipcode: '90210' }
+        @person = new Person()
+        @returns = @person.set(address: new Address(@attrs))
 
-        @AddressModel = AddressModel
-        @PersonModel = PersonModel
+      it 'returns the correct object', ->
+        expect(@returns).not.to.be @person
 
-      describe 'given coerseable and uncoerseable attributes', ->
-        beforeEach ->
-          @address = { zipcode: '90210' }
-          @attrs = { firstName: 'Alex', address: @address }
-          @person = new @PersonModel @attrs
-          @returns = @person.toJSON()
+      it 'returns the correct attributes', ->
+        expect(@returns.attributes).to.eql { address: new Address(@attrs) }
 
-        it 'has the correct attributes', ->
-          expected = { firstName: 'Alex', address: new @AddressModel @address }
-          expect(@person.attributes).to.eql expected
+      it 'returns the correct options', ->
+        expect(@returns.options).to.eql {}
 
-        it 'has the correct errors', ->
-          expect(@model.errors).to.eql {}
+      it 'returns the correct errors', ->
+        expect(@returns.errors).to.eql {}
 
-        it 'returns the correct attributes', ->
-          expect(@returns).to.eql @attrs
-
-      describe 'given no attributes', ->
-        beforeEach ->
-          @person = new @PersonModel()
-          @returns = @person.toJSON()
-
-        it 'has the correct attributes', ->
-          expect(@person.attributes).to.eql {}
-
-        it 'has the correct errors', ->
-          expect(@model.errors).to.eql {}
-
-        it 'returns the correct attributes', ->
-          expect(@returns).to.eql {}
-
-  describe 'validate', ->
-    describe 'given a model with validation', ->
-      beforeEach ->
-        class @LisaModel extends Model
-          validations:
-            firstName:
-              required: true
-
-      describe 'given invalid attributes', ->
-        beforeEach ->
-          @attrs = { firstName: null }
-          @model = new @LisaModel @attrs
-          @returns = @model.validate()
-
-        it 'has the correct attributes', ->
-          expect(@model.attributes).to.eql @attrs
-
-        it 'has the correct errors', ->
-          expect(@model.errors).to.eql { firstName: 'Required' }
-
-        it 'has the correct validity', ->
-          expect(@model.isValid()).to.be false
-
-        it 'returns an instance of itself', ->
-          expect(@returns instanceof Model).to.be true
-
-        it 'returns the correct validity', ->
-          expect(@returns.isValid()).to.be false
-
-        it 'returns the correct attributes', ->
-          expect(@returns.attributes).to.eql @attrs
-
-        it 'returns the correct errors', ->
-          expect(@returns.errors).to.eql { firstName: 'Required' }
-
-      describe 'given valid attributes', ->
-        beforeEach ->
-          @attrs = { firstName: 'Lisa' }
-          @model = new @LisaModel @attrs
-          @returns = @model.validate()
-
-        it 'has the correct attributes', ->
-          expect(@model.attributes).to.eql @attrs
-
-        it 'has the correct errors', ->
-          expect(@model.errors).to.eql {}
-
-        it 'has the correct validity', ->
-          expect(@model.isValid()).to.be true
-
-        it 'returns an instance of itself', ->
-          expect(@returns instanceof Model).to.be true
-
-        it 'returns the correct validity', ->
-          expect(@returns.isValid()).to.be true
-
-        it 'returns the correct attributes', ->
-          expect(@returns.attributes).to.eql @attrs
-
-        it 'returns the correct errors', ->
-          expect(@returns.errors).to.eql {}
-
-      describe 'given no attributes', ->
-        beforeEach ->
-          @model = new @LisaModel()
-          @returns = @model.validate()
-
-        it 'has the correct attributes', ->
-          expect(@model.attributes).to.eql {}
-
-        it 'has the correct errors', ->
-          expect(@model.errors).to.eql {}
-
-        it 'has the correct validity', ->
-          expect(@model.isValid()).to.be true
-
-        it 'returns an instance of itself', ->
-          expect(@returns instanceof Model).to.be true
-
-        it 'returns the correct validity', ->
-          expect(@returns.isValid()).to.be false
-
-        it 'returns the correct attributes', ->
-          expect(@returns.attributes).to.eql { firstName: null }
-
-        it 'returns the correct errors', ->
-          expect(@returns.errors).to.eql { firstName: 'Required' }
-
-    describe 'given a model with validation and a model with coersion', ->
-      beforeEach ->
-        class AddressModel extends Model
-          validations:
-            zipcode:
-              required: true
-
-        class PersonModel extends Model
-          coersions:
-            address: AddressModel
-
-          validations:
-            address:
-              coersion: true
-
-        @AddressModel = AddressModel
-        @PersonModel = PersonModel
-
-      describe 'given invalid attributes', ->
-        beforeEach ->
-          @address = { zipcode: null }
-          @person = new @PersonModel address: @address
-          @returns = @person.validate()
-
-        it 'has the correct attributes', ->
-          expected = { address: new @AddressModel @address }
-          expect(@person.attributes).to.eql expected
-
-        it 'has the correct errors', ->
-          expect(@person.errors).to.eql { address: { zipcode: 'Required' } }
-
-        it 'has the correct validity', ->
-          expect(@person.isValid()).to.be false
-
-        it 'returns an instance of itself', ->
-          expect(@returns instanceof Model).to.be true
-
-        it 'returns the correct validity', ->
-          expect(@returns.isValid()).to.be false
-
-        it 'returns the correct attributes', ->
-          expected = { address: new @AddressModel @address }
-          expect(@returns.attributes).to.eql expected
-
-        it 'returns the correct errors', ->
-          expect(@returns.errors).to.eql { address: { zipcode: 'Required' } }
-
-      describe 'given valid attributes', ->
-        beforeEach ->
-          @address = { zipcode: '90210' }
-          @person = new @PersonModel address: @address
-          @returns = @person.validate()
-
-        it 'has the correct attributes', ->
-          expected = { address: new @AddressModel @address }
-          expect(@person.attributes).to.eql expected
-
-        it 'has the correct errors', ->
-          expect(@person.errors).to.eql {}
-
-        it 'has the correct validity', ->
-          expect(@person.isValid()).to.be true
-
-        it 'returns an instance of itself', ->
-          expect(@returns instanceof Model).to.be true
-
-        it 'returns the correct validity', ->
-          expect(@returns.isValid()).to.be true
-
-        it 'returns the correct attributes', ->
-          expected = { address: new @AddressModel @address }
-          expect(@returns.attributes).to.eql expected
-
-        it 'returns the correct errors', ->
-          expect(@returns.errors).to.eql {}
-
-      describe 'given no attributes', ->
-        beforeEach ->
-          @person = new @PersonModel address: {}
-          @returns = @person.validate()
-
-        it 'has the correct attributes', ->
-          expected = { address: new @AddressModel() }
-          expect(@person.attributes).to.eql expected
-
-        it 'has the correct errors', ->
-          expect(@person.errors).to.eql {}
-
-        it 'has the correct validity', ->
-          expect(@person.isValid()).to.be true
-
-        it 'returns an instance of itself', ->
-          expect(@returns instanceof Model).to.be true
-
-        it 'returns the correct validity', ->
-          expect(@returns.isValid()).to.be false
-
-        it 'returns the correct attributes', ->
-          expected = { address: new @AddressModel { zipcode: null } }
-          expect(@returns.attributes).to.eql expected
-
-        it 'returns the correct errors', ->
-          expect(@returns.errors).to.eql { address: { zipcode: 'Required' } }
+      it 'returns the correct validity', ->
+        expect(@returns.isValid()).to.be true

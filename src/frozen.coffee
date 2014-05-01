@@ -1,62 +1,61 @@
 # See https://github.com/thedersen/backbone.validation for an example API
 class Validation
   @required: (prop, value, opts, model) ->
-    opts.message ? 'Required' if value is null or value.trim() is ''
+    opts.message ? 'Required' if not value? or value.trim() is ''
 
   @coersion: (prop, value, opts, model) ->
-    if value.isValid() then undefined else value.errors
+    value.errors if value? and not value.isValid()
 
 extend = (to, froms...) ->
   for from in froms
     to[prop] = value for prop, value of from when from.hasOwnProperty(prop)
   to
 
-# An immutable model based on Backbone.Model
 class Model
-  # Accepts an Object
-  #
-  # Example:
-  #  { firstName: 'Kevin', lastName: 'Bacon' }
-  #
-  constructor: (attributes = {}) ->
-    original = attributes
+  constructor: (@attributes, @options) ->
+    @attributes = extend({}, @attributes)
+    @options = extend({}, @options)
+    @errors = {}
 
     for prop, coersion of @coersions
-      value = attributes[prop]
+      value = @attributes[prop]
+      continue unless value?
 
-      unless value is undefined or value instanceof coersion
-        attributes = extend({}, attributes) if attributes is original
-        attributes[prop] = new coersion(value)
-
-    @attributes = Object.freeze(attributes)
-
-    @errors = {}
+      value = value.attributes if value instanceof coersion
+      @attributes[prop] = new coersion(value, @options)
 
     for prop, validation of @validations
       value = @attributes[prop]
-      continue if value is undefined
+      continue unless @options.validation is 'force' or value?
 
-      for type, options of validation
-        # continue unless options
+      for type, opts of validation
+        # continue unless opts
 
         validator = Validation[type]
         continue unless validator?
 
-        error = validator(prop, value, options, @)
+        error = validator(prop, value, opts, @)
         continue unless error?
 
         @errors[prop] = error
         break
 
+    Object.freeze(@attributes)
+    Object.freeze(@options)
     Object.freeze(@errors)
 
   get: (prop) ->
     @attributes[prop]
 
-  set: (prop, value) ->
-    attributes = extend({}, @attributes)
-    attributes[prop] = value
-    new @constructor(attributes)
+  set: (attributes, options = @options) ->
+    attributes = extend({}, @attributes, attributes)
+    new @constructor(attributes, options)
+
+  validate: ->
+    new @constructor(@attributes, validation: 'force')
+
+  isValid: ->
+    Object.keys(@errors).length is 0
 
   toJSON: ->
     attributes = extend({}, @attributes)
@@ -64,18 +63,6 @@ class Model
       continue unless attributes[prop]?
       attributes[prop] = attributes[prop].toJSON()
     attributes
-
-  validate: ->
-    attributes = extend({}, @attributes)
-    for prop of @validations
-      if @coersions?.hasOwnProperty(prop) and attributes[prop]?
-        attributes[prop] = attributes[prop].validate()
-      else
-        attributes[prop] ?= null
-    new @constructor(attributes)
-
-  isValid: ->
-    Object.keys(@errors).length is 0
 
 # An immutable collection based on Backbone.Collection
 class Collection
@@ -125,9 +112,9 @@ class Collection
     models = @models.concat([model])
     new @constructor(models)
 
-  change: (key, prop, value) ->
+  change: (key, attributes) ->
     models = for model, index in @models
-      if index is key then model.set(prop, value) else model
+      if index is key then model.set(attributes) else model
 
     new @constructor(models)
 

@@ -136,7 +136,7 @@ describe 'Collection', ->
       @object0 = firstName: 'Alice'
       @object1 = firstName: 'Katherine'
       @collection = new Collection [@object0, @object1]
-      @returns = @collection.change(0, 'firstName', 'Julia')
+      @returns = @collection.change(0, firstName: 'Julia')
 
     it 'has the correct models', ->
       expect(@collection.models).to.eql [new Model(@object0), new Model(@object1)]
