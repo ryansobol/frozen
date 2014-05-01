@@ -1,6 +1,9 @@
 class Validation
   @required: (prop, value, opts, model) ->
-    opts.message ? 'Required' if value.trim() is ''
+    opts.message ? 'Required' if value is null or value.trim() is ''
+
+  @coersion: (prop, value, opts, model) ->
+    if value.isValid() then undefined else value.errors
 
 extend = (to, froms...) ->
   for from in froms
@@ -18,9 +21,11 @@ class Model
     original = attributes
 
     for prop, coersion of @coersions
-      if attributes[prop] and not (attributes[prop] instanceof coersion)
+      value = attributes[prop]
+
+      unless value is undefined or value instanceof coersion
         attributes = extend({}, attributes) if attributes is original
-        attributes[prop] = new coersion(attributes[prop])
+        attributes[prop] = new coersion(value)
 
     @attributes = Object.freeze(attributes)
 
@@ -28,9 +33,11 @@ class Model
 
     for prop, validation of @validations
       value = @attributes[prop]
-      continue unless value?
+      continue if value is undefined
 
       for type, options of validation
+        # continue unless options
+
         validator = Validation[type]
         continue unless validator?
 
@@ -52,12 +59,18 @@ class Model
 
   toJSON: ->
     attributes = extend({}, @attributes)
-    attributes[prop] = attributes[prop].toJSON() for prop of @coersions
+    for prop of @coersions
+      continue unless attributes[prop]?
+      attributes[prop] = attributes[prop].toJSON()
     attributes
 
   validate: ->
     attributes = extend({}, @attributes)
-    attributes[prop] ?= '' for prop of @validations
+    for prop of @validations
+      if @coersions?.hasOwnProperty(prop) and attributes[prop]?
+        attributes[prop] = attributes[prop].validate()
+      else
+        attributes[prop] ?= null
     new @constructor(attributes)
 
   isValid: ->
