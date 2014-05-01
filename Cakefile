@@ -22,7 +22,7 @@ task 'watch', 'Recompile the source files when modified', ->
 
 task 'test', 'Run the test suite', ->
   build ->
-    args = ['--compilers', 'coffee:coffee-script/register', '-R', 'progress']
+    args = ['--compilers', 'coffee:coffee-script/register', '-R', 'min']
     launch 'node_modules/.bin/mocha', args
 
 task 'docs', 'Generate the documentation', ->
