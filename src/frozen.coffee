@@ -1,3 +1,4 @@
+# See https://github.com/thedersen/backbone.validation for an example API
 class Validation
   @required: (prop, value, opts, model) ->
     opts.message ? 'Required' if value is null or value.trim() is ''
