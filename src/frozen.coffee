@@ -29,7 +29,7 @@ class Model
       continue unless @options.validation is 'force' or value?
 
       for type, opts of validation
-        # continue unless opts
+        continue unless opts
 
         validator = Validation[type]
         continue unless validator?

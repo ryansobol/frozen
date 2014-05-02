@@ -14,6 +14,8 @@ class Person extends Model
     firstName:
       required: true
       unknown: true
+    nickName:
+      required: false
     address:
       coersion: true
 
