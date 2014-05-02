@@ -24,6 +24,3 @@ task 'test', 'Run the test suite', ->
   build ->
     args = ['--compilers', 'coffee:coffee-script/register', '-R', 'min']
     launch 'node_modules/.bin/mocha', args
-
-task 'docs', 'Generate the documentation', ->
-  launch 'node_modules/.bin/docco', ['src/frozen.coffee']
