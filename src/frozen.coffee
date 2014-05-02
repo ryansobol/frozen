@@ -64,36 +64,9 @@ class Model
       attributes[prop] = attributes[prop].toJSON()
     attributes
 
-# An immutable collection based on Backbone.Collection
 class Collection
   model: Model
 
-  # Accepts an Object
-  #
-  # Example:
-  #  { firstName: 'Kevin', lastName: 'Bacon' }
-  #
-  # Accepts an Array of Objects
-  #
-  # Example:
-  #   [
-  #     { firstName: 'Michelle', lastName: 'Obama' },
-  #     { firstName: 'Emma', lastName: 'Stone' }
-  #   ]
-  #
-  # Accepts a Model
-  #
-  # Example:
-  #  new Model({ firstName: 'Kevin', lastName: 'Bacon' })
-  #
-  # Accepts an Array of Models
-  #
-  # Example:
-  #   [
-  #     new Model({ firstName: 'Michelle', lastName: 'Obama' }),
-  #     new Model({ firstName: 'Emma', lastName: 'Stone' })
-  #   ]
-  #
   constructor: (models = []) ->
     models = [models] unless models instanceof Array
 
