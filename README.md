@@ -131,13 +131,15 @@ user.errors
 To create structured attributes, associate them with a **Frozen.Model** or **Frozen.Collection**.
 
 ```coffee
+class Profile extends Frozen.Model
+
 class User extends Frozen.Model
   associations:
-    friend: User
+    profile: Profile
 
-user = new User({ friend: { name: 'Kristoff' } })
+user = new User({ profile: { type: 'Snowman' } })
 user.attributes
-#=> { friend: User({ name: 'Kristoff' }) }
+#=> { profile: Profile({ type: 'Snowman' }) }
 ```
 
 ```coffee
@@ -157,21 +159,24 @@ user.attributes
 To validate associated attributes, include the `association: true` property.
 
 ```coffee
+class Profile extends Frozen.Model
+  validations:
+    type:
+      required: true
+
 class User extends Frozen.Model
   associations:
-    friend: User
+    profile: User
 
   validations:
-    name:
-      required: true
-    friend:
+    profile:
       association: true
 
-user = new User({ friend: { name: '' } })
+user = new User({ profile: { type: '' } })
 user.attributes
-#=> { friend: User({ name: '' }) }
+#=> { profile: Profile({ type: '' }) }
 user.errors
-#=> { friend: { name: 'Required' } }
+#=> { profile: { type: 'Required' } }
 ```
 
 ### get
