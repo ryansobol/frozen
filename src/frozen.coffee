@@ -81,17 +81,16 @@ class Collection
     @models[key]
 
   add: (model = {}) ->
-    model  = new @model(model) unless model instanceof Model
+    model = new @model(model) unless model instanceof Model
     models = @models.concat([model])
     new @constructor(models)
 
   change: (key, attributes) ->
     models = for model, index in @models
       if index is key then model.set(attributes) else model
-
     new @constructor(models)
 
-  destroy: (key) ->
+  remove: (key) ->
     models = (model for model, index in @models when index isnt key)
     new @constructor(models)
 
