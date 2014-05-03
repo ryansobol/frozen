@@ -186,7 +186,7 @@ user.errors
 Given a key, fetch the value of a model's attribute.
 
 ```coffee
-model = new Frozen.Model({ name: 'Anna' })
+model = new Frozen.Model({ name: 'Elsa' })
 model.get('name')
 #=> 'Anna'
 model.get('age')
