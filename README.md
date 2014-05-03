@@ -19,8 +19,8 @@ princess.get('name')
 
 ```coffee
 royals = new Frozen.Collection({ name: 'Elsa' })
-royals.at(0)
-#=> new Frozen.Model({ name: 'Elsa' })
+royals.at(0).attributes
+#=> { name: 'Elsa' }
 
 royals.add({name: 'Anna'})
 #=> new Frozen.Collection([{ name: 'Elsa' }, { name: 'Anna' }])
@@ -31,8 +31,8 @@ royals.change(0, { name: 'Snow Queen' })
 royals.remove(0)
 #=> new Frozen.Collection()
 
-royals.at(0)
-#=> new Frozen.Model({ name: 'Elsa' })
+royals.at(0).attributes
+#=> { name: 'Elsa' }
 ```
 
 ## Frozen.Model
