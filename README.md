@@ -19,8 +19,8 @@ princess.get('name')
 
 ```coffee
 royals = new Frozen.Collection({ name: 'Elsa' })
-royals.at(0).attributes
-#=> { name: 'Elsa' }
+royals.at(0)
+#=> Frozen.Model({ name: 'Elsa' })
 
 royals.add({name: 'Anna'})
 #=> new Frozen.Collection([{ name: 'Elsa' }, { name: 'Anna' }])
@@ -31,8 +31,8 @@ royals.change(0, { name: 'Snow Queen' })
 royals.remove(0)
 #=> new Frozen.Collection()
 
-royals.at(0).attributes
-#=> { name: 'Elsa' }
+royals.at(0)
+#=> Frozen.Model({ name: 'Elsa' })
 ```
 
 ## Frozen.Model
@@ -57,7 +57,7 @@ class User extends Frozen.Model
 
 user = new User({ name: 'Olaf', profile: { type: 'Snowman' } })
 user.attributes
-#=> { name: 'Olaf', profile: new Profile({ type: 'Snowman' }) }
+#=> { name: 'Olaf', profile: Profile({ type: 'Snowman' }) }
 user.errors
 #=> {}
 user.title()
@@ -65,7 +65,7 @@ user.title()
 
 user = new User({ name: '', profile: { type: 'Snowman' } })
 user.attributes
-#=> { name: '', profile: new Profile({ type: 'Snowman' }) }
+#=> { name: '', profile: Profile({ type: 'Snowman' }) }
 user.errors
 #=> { name: 'Required' }
 ```
@@ -137,7 +137,7 @@ class User extends Frozen.Model
 
 user = new User({ friend: { name: 'Kristoff' } })
 user.attributes
-#=> { friend: new User({ name: 'Kristoff' }) }
+#=> { friend: User({ name: 'Kristoff' }) }
 ```
 
 ```coffee
@@ -151,7 +151,7 @@ class User extends Frozen.Model
 
 user = new User({ spells: [{ type: 'Ice' }, { type: 'Snow' }] })
 user.attributes
-#=> { spells: new Spells([{ type: 'Ice' }, { type: 'Snow' }]) }
+#=> { spells: Spells([{ type: 'Ice' }, { type: 'Snow' }]) }
 ```
 
 To validate associated attributes, include the `association: true` property.
@@ -169,7 +169,7 @@ class User extends Frozen.Model
 
 user = new User({ friend: { name: '' } })
 user.attributes
-#=> { friend: new User({ name: '' }) }
+#=> { friend: User({ name: '' }) }
 user.errors
 #=> { friend: { name: 'Required' } }
 ```
