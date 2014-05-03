@@ -37,7 +37,7 @@ royals.at(0).attributes
 
 ## Frozen.Model
 
-A **Frozen.Model** represent an application's state with key-value attributes and possible validation erors.
+A **Frozen.Model** represent an application's state with key-value **attributes** and possible validation **errors**.
 
 Custom models extend **Frozen.Model** with domain-specific validation rules, associated attributes, computed properties, etc.
 
