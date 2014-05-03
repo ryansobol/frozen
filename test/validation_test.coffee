@@ -36,24 +36,24 @@ describe 'Validation', ->
       it 'returns the correct message', ->
         expect(@returns).to.eql 'Required'
 
-  describe 'coersion', ->
+  describe 'association', ->
     describe 'given a valid value', ->
       beforeEach ->
-        @returns = Validation.coersion('address', new Address(zipcode: '90210'))
+        @returns = Validation.association('address', new Address(zipcode: '90210'))
 
       it 'returns the correct message', ->
         expect(@returns).to.eql undefined
 
     describe 'given an invalid value', ->
       beforeEach ->
-        @returns = Validation.coersion('address', new Address(zipcode: ''))
+        @returns = Validation.association('address', new Address(zipcode: ''))
 
       it 'returns the correct message', ->
         expect(@returns).to.eql { zipcode: 'Required' }
 
     describe 'given no value', ->
       beforeEach ->
-        @returns = Validation.coersion('address', null)
+        @returns = Validation.association('address', null)
 
       it 'returns the correct message', ->
         expect(@returns).to.eql undefined

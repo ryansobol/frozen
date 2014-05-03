@@ -3,7 +3,7 @@ class Validation
   @required: (prop, value, opts, model) ->
     opts.message ? 'Required' if not value? or value.trim() is ''
 
-  @coersion: (prop, value, opts, model) ->
+  @association: (prop, value, opts, model) ->
     value.errors if value? and not value.isValid()
 
 extend = (to, froms...) ->
@@ -17,12 +17,12 @@ class Model
     @options = extend({}, @options)
     @errors = {}
 
-    for prop, coersion of @coersions
+    for prop, association of @associations
       value = @attributes[prop]
       continue unless value?
 
-      value = value.attributes if value instanceof coersion
-      @attributes[prop] = new coersion(value, @options)
+      value = value.attributes if value instanceof association
+      @attributes[prop] = new association(value, @options)
 
     for prop, validation of @validations
       value = @attributes[prop]
@@ -59,7 +59,7 @@ class Model
 
   toJSON: ->
     attributes = extend({}, @attributes)
-    for prop of @coersions
+    for prop of @associations
       continue unless attributes[prop]?
       attributes[prop] = attributes[prop].toJSON()
     attributes

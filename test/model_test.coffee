@@ -7,7 +7,7 @@ class Address extends Model
       required: true
 
 class Person extends Model
-  coersions:
+  associations:
     address: Address
 
   validations:
@@ -17,7 +17,7 @@ class Person extends Model
     nickName:
       required: false
     address:
-      coersion: true
+      association: true
 
 describe 'Model', ->
   describe 'constructor', ->
