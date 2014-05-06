@@ -1,9 +1,9 @@
 # See https://github.com/thedersen/backbone.validation for an example API
 class Validation
-  @required: (prop, value, opts, model) ->
+  @required: (key, value, opts, model) ->
     opts.message ? 'Required' if not value? or value.trim() is ''
 
-  @association: (prop, value, opts, model) ->
+  @association: (key, value, opts, model) ->
     value.errors if value? and not value.isValid()
 
 extend = (to, froms...) ->
@@ -16,18 +16,18 @@ class Model
     attributes = extend({}, attributes)
     errors = {}
 
-    for prop, association of @associations
-      value = attributes[prop]
+    for key, association of @associations
+      value = attributes[key]
       continue unless value?
 
       if value instanceof association
         continue if force is value.force
         value = value.attributes
 
-      attributes[prop] = new association(value, force)
+      attributes[key] = new association(value, force)
 
-    for prop, validation of @validations
-      value = attributes[prop]
+    for key, validation of @validations
+      value = attributes[key]
       continue unless force or value?
 
       for type, opts of validation
@@ -36,18 +36,18 @@ class Model
         validator = Validation[type]
         continue unless validator?
 
-        error = validator(prop, value, opts, @)
+        error = validator(key, value, opts, @)
         continue unless error?
 
-        errors[prop] = error
+        errors[key] = error
         break
 
     Object.defineProperty(@, 'attributes', value: Object.freeze(attributes))
     Object.defineProperty(@, 'errors', value: Object.freeze(errors))
     Object.defineProperty(@, 'force', value: force)
 
-  get: (prop) ->
-    @attributes[prop]
+  get: (key) ->
+    @attributes[key]
 
   set: (attributes, force = @force) ->
     attributes = extend({}, @attributes, attributes)
@@ -61,9 +61,9 @@ class Model
 
   toJSON: ->
     attributes = extend({}, @attributes)
-    for prop of @associations
-      continue unless attributes[prop]?
-      attributes[prop] = attributes[prop].toJSON()
+    for key of @associations
+      continue unless attributes[key]?
+      attributes[key] = attributes[key].toJSON()
     attributes
 
 class Collection
