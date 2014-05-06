@@ -37,7 +37,7 @@ royals.at(0)
 
 ## Frozen.Model
 
-A **Frozen.Model** represent an application's state with key-value **attributes** and possible validation **errors**.
+A **Frozen.Model** is an immutable representation of an application's state and consists of key-value **attributes** and possible validation **errors**.
 
 Custom models extend **Frozen.Model** with domain-specific validation rules, associated attributes, computed properties, etc.
 
@@ -301,7 +301,9 @@ user.toJSON()
 
 ## Frozen.Collection
 
-**Collections** have a rich API of enumerable functions
+A **Frozen.Collection** is an ordered and immutable series of **models**. It has APIs for retrieving a single model, constructing new collections, and converting and validating an entire collection.
+
+Custom collections extend **Frozen.Collection** with a custom model definition, domain-specific validation rules, associated model, computed properties, etc.
 
 ```coffee
 class Subject extends Frozen.Model
