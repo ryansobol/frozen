@@ -11,17 +11,25 @@ extend = (to, froms...) ->
     to[prop] = value for prop, value of from when from.hasOwnProperty(prop)
   to
 
+class Options
+  isEqual: (other) ->
+    return true if @ is other
+    @.validation is other.validation
+
 class Model
   constructor: (@attributes, @options) ->
     @attributes = extend({}, @attributes)
-    @options = extend({}, @options)
+    @options = extend(new Options(), @options)
     @errors = {}
 
     for prop, association of @associations
       value = @attributes[prop]
       continue unless value?
 
-      value = value.attributes if value instanceof association
+      if value instanceof association
+        continue if @options.isEqual(value.options)
+        value = value.attributes
+
       @attributes[prop] = new association(value, @options)
 
     for prop, validation of @validations
