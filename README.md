@@ -331,6 +331,51 @@ creature.isValid()
 #=> true
 ```
 
+### constructor
+
+##### `new Frozen.Collection(models = [])`
+
+
+### at
+
+##### `collection.at(index)`
+
+
+### add
+
+##### `collection.add(model = {})`
+
+
+### change
+
+##### `collection.change(index, attributes)`
+
+
+### remove
+
+##### `collection.remove(index)`
+
+
+### map
+
+##### `collection.map(callback, thisArg)`
+
+
+### toJSON
+
+##### `collection.toJSON()`
+
+
+### validate
+
+
+##### `collection.validate()`
+
+
+### isValid
+
+##### `collection.isValid()`
+
 
 ## Why
 
