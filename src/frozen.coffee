@@ -79,21 +79,21 @@ class Collection
 
     Object.freeze(@models)
 
-  at: (key) ->
-    @models[key]
+  at: (index) ->
+    @models[index]
 
   add: (model = {}) ->
     model = new @model(model) unless model instanceof Model
     models = @models.concat([model])
     new @constructor(models)
 
-  change: (key, attributes) ->
-    models = for model, index in @models
-      if index is key then model.set(attributes) else model
+  change: (index, attributes) ->
+    models = for model, idx in @models
+      if index is idx then model.set(attributes) else model
     new @constructor(models)
 
-  remove: (key) ->
-    models = (model for model, index in @models when index isnt key)
+  remove: (index) ->
+    models = (model for model, idx in @models when index isnt idx)
     new @constructor(models)
 
   map: (callback, thisArg) ->
