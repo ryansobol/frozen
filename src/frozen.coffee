@@ -12,23 +12,23 @@ extend = (to, froms...) ->
   to
 
 class Model
-  constructor: (@attributes, @force = false) ->
-    @attributes = extend({}, @attributes)
-    @errors = {}
+  constructor: (attributes, force = false) ->
+    attributes = extend({}, attributes)
+    errors = {}
 
     for prop, association of @associations
-      value = @attributes[prop]
+      value = attributes[prop]
       continue unless value?
 
       if value instanceof association
-        continue if @force is value.force
+        continue if force is value.force
         value = value.attributes
 
-      @attributes[prop] = new association(value, @force)
+      attributes[prop] = new association(value, force)
 
     for prop, validation of @validations
-      value = @attributes[prop]
-      continue unless @force or value?
+      value = attributes[prop]
+      continue unless force or value?
 
       for type, opts of validation
         continue unless opts
@@ -39,11 +39,12 @@ class Model
         error = validator(prop, value, opts, @)
         continue unless error?
 
-        @errors[prop] = error
+        errors[prop] = error
         break
 
-    Object.freeze(@attributes)
-    Object.freeze(@errors)
+    Object.defineProperty(@, 'attributes', value: Object.freeze(attributes))
+    Object.defineProperty(@, 'errors', value: Object.freeze(errors))
+    Object.defineProperty(@, 'force', value: force)
 
   get: (prop) ->
     @attributes[prop]
