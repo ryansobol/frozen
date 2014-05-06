@@ -76,7 +76,7 @@ class Collection
 
     @length = @models.length
 
-    Object.freeze @models
+    Object.freeze(@models)
 
   at: (key) ->
     @models[key]
