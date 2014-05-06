@@ -11,15 +11,9 @@ extend = (to, froms...) ->
     to[prop] = value for prop, value of from when from.hasOwnProperty(prop)
   to
 
-class Options
-  isEqual: (other) ->
-    return true if @ is other
-    @.validation is other.validation
-
 class Model
-  constructor: (@attributes, @options) ->
+  constructor: (@attributes, @force = false) ->
     @attributes = extend({}, @attributes)
-    @options = extend(new Options(), @options)
     @errors = {}
 
     for prop, association of @associations
@@ -27,14 +21,14 @@ class Model
       continue unless value?
 
       if value instanceof association
-        continue if @options.isEqual(value.options)
+        continue if @force is value.force
         value = value.attributes
 
-      @attributes[prop] = new association(value, @options)
+      @attributes[prop] = new association(value, @force)
 
     for prop, validation of @validations
       value = @attributes[prop]
-      continue unless @options.validation is 'force' or value?
+      continue unless @force or value?
 
       for type, opts of validation
         continue unless opts
@@ -49,18 +43,17 @@ class Model
         break
 
     Object.freeze(@attributes)
-    Object.freeze(@options)
     Object.freeze(@errors)
 
   get: (prop) ->
     @attributes[prop]
 
-  set: (attributes, options = @options) ->
+  set: (attributes, force = @force) ->
     attributes = extend({}, @attributes, attributes)
-    new @constructor(attributes, options)
+    new @constructor(attributes, force)
 
   validate: ->
-    new @constructor(@attributes, validation: 'force')
+    new @constructor(@attributes, true)
 
   isValid: ->
     Object.keys(@errors).length is 0

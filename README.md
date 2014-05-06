@@ -72,7 +72,7 @@ user.errors
 
 ### constructor
 
-##### `new Frozen.Model(attributes, options)`
+##### `new Frozen.Model(attributes, force = false)`
 
 To create an instance of a model, simply pass in key-value attributes.
 
@@ -105,7 +105,7 @@ user.errors
 #=> { name: 'Required' }
 ```
 
-To force validation on both `null` and `undefined` attributes, supply the `validation: 'force'` option.
+Optionally, validations can be forced on both `null` and `undefined` attributes.
 
 ```coffee
 class User extends Frozen.Model
@@ -118,12 +118,16 @@ user.attributes
 #=> { role: 'queen' }
 user.errors
 #=> {}
+user.force
+#=> false
 
-user = new User({ role: 'queen' }, { validation: 'force' })
+user = new User({ role: 'queen' }, true)
 user.attributes
 #=> { role: 'queen' }
 user.errors
 #=> { name: 'Required' }
+user.force
+#=> true
 ```
 
 #### Associations
@@ -195,7 +199,7 @@ model.get('age')
 
 ### set
 
-##### `model.set(attributes, options)`
+##### `model.set(attributes, force = @force)`
 
 Create a new instance by merging new key-value attributes into the model's attributes. Because instances of **Frozen.Model** are immutable, the original model is unchanged.
 
@@ -209,27 +213,27 @@ model.get('name')
 #=> 'Anna'
 ```
 
-The new instance has the same constructor options as the original model unless specified.
+Unless specified, the new model inherits the same validation rules as the original model.
 
 ```coffee
 mountaineer = new Frozen.Model({ name: 'Kristoff' })
-mountaineer.options
-#=> {}
+mountaineer.force
+#=> false
 
 princess = mountaineer.set({ name: 'Anna' })
-princess.options
-#=> {}
+princess.force
+#=> false
 
-queen = princess.set({ name: 'Elsa' }, { validation: 'force' })
-queen.options
-#=> { validation: 'force' }
+queen = princess.set({ name: 'Elsa' }, true)
+queen.force
+#=> true
 ```
 
 ### validate
 
 ##### `model.validate()`
 
-Create a new instance with forced validations of `null` and `undefined` attributes.
+Create a new model with forced validations of both `null` and `undefined` attributes.
 
 ```coffee
 class User extends Frozen.Model
