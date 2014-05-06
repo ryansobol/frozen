@@ -35,6 +35,18 @@ royals.at(0)
 #=> Frozen.Model({ name: 'Elsa' })
 ```
 
+## Why
+
+Speed up your React application _and_ your development time by using immutable data structures with familiar APIs.
+
+
+## Guides
+
+- The README
+- The wiki
+- The article(s)
+
+
 ## Frozen.Model
 
 Instances of **Frozen.Model** represent a single entity in an application's state. They consist of immutable key-value **attributes** and possible validation **errors**. They also have APIs for retrieving a single attribute, constructing new models, and converting attributes to JSON.
@@ -375,17 +387,6 @@ creature.isValid()
 ### isValid
 
 ##### `collection.isValid()`
-
-
-## Why
-
-Speed up your React application _and_ your development time by using immutable data structures with familiar APIs.
-
-
-## Guides
-
-- The wiki
-- This article
 
 
 ## Thank you
