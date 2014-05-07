@@ -106,7 +106,7 @@ user.errors
 
 ##### `new Frozen.Model(attributes, force = false)`
 
-Return a new model with the given key-value attributes.
+Returns a new model with the given key-value attributes.
 
 ```coffee
 model = new Frozen.Model({ name: 'Elsa', role: 'queen' })
@@ -219,7 +219,7 @@ user.errors
 
 ##### `model.get(key)`
 
-Given a key, return the value of a model's attribute.
+Given a key, returns the value of a model's attribute.
 
 ```coffee
 model = new Frozen.Model({ name: 'Elsa' })
@@ -233,7 +233,7 @@ model.get('age')
 
 ##### `model.set(attributes, force = @force)`
 
-Return a new model by merging the given attributes into the model's attributes. Because model attributes are immutable, the original model is unchanged.
+Returns a new model by merging the given attributes into the model's attributes. Because model attributes are immutable, the original model is unchanged.
 
 ```coffee
 model = new Frozen.Model({ name: 'Anna' })
@@ -265,7 +265,7 @@ queen.force
 
 ##### `model.validate()`
 
-Return a new model with forced validations of both `null` and `undefined` attributes. Because model errors are immutable, the original model is unchanged.
+Returns a new model with forced validations of both `null` and `undefined` attributes. Because model errors are immutable, the original model is unchanged.
 
 ```coffee
 class User extends Frozen.Model
@@ -289,7 +289,7 @@ user.errors
 
 ##### `model.isValid()`
 
-Return `true` or `false` depending on whether the model has any errors.
+Returns `true` or `false` depending on whether the model has any errors.
 
 ```coffee
 class User extends Frozen.Model
@@ -314,7 +314,7 @@ user.isValid()
 
 ##### `model.toJSON()`
 
-Return a shallow copy of the model's attributes for JSON stringification.
+Returns a shallow copy of the model's attributes for JSON stringification.
 
 The name of this method is a bit confusing, as it doesn't actually return a JSON string. Unfortunately, that's the way the JavaScript API for [JSON.stringify](https://developer.mozilla.org/en-US/docs/JSON#toJSON()_method) works.
 
@@ -370,7 +370,7 @@ creature.isValid()
 
 ##### `new Frozen.Collection(models = [])`
 
-Return a new collection with the given array of models.
+Returns a new collection with the given array of models.
 
 
 If an array of attributes is given, new models are instantiated.
@@ -383,21 +383,21 @@ To instantiate custom models, provide a `model` property.
 
 ##### `collection.at(index)`
 
-Return the model at the given index positioned by insertion order.
+Returns the model at the given index positioned by insertion order.
 
 
 ### Collection.prototype.insert
 
 ##### `collection.insert(index, model = {})`
 
-Return a new collection with the given model inserted at the given index positioned by insertion order. Because collection models are immutable, the original collection is unchanged.
+Returns a new collection with the given model inserted at the given index positioned by insertion order. Because collection models are immutable, the original collection is unchanged.
 
 
 ### Collection.prototype.push
 
 ##### `collection.push(model = {})`
 
-Return a new collection with the given model appended to the end. Because collection models are immutable, the original collection is unchanged.
+Returns a new collection with the given model appended to the end. Because collection models are immutable, the original collection is unchanged.
 
 
 If attributes are given, a new model is instantiated.
@@ -410,35 +410,35 @@ To instantiate a custom model, provide a `model` property.
 
 ##### `collection.change(index, attributes)`
 
-Return a new collection by merging the given attributes into the collection's model at the given index. Because collection models are immutable, the original collection is unchanged.
+Returns a new collection by merging the given attributes into the collection's model at the given index. Because collection models are immutable, the original collection is unchanged.
 
 
 ### Collection.prototype.remove
 
 ##### `collection.remove(index)`
 
-Return a new collection without the model at the given index. Because collection models are immutable, the original collection is unchanged.
+Returns a new collection without the model at the given index. Because collection models are immutable, the original collection is unchanged.
 
 
 ### Collection.prototype.validate
 
 ##### `collection.validate()`
 
-Return a new collection with forced validations for all models. Because collection models are immutable, the original collection is unchanged.
+Returns a new collection with forced validations for all models. Because collection models are immutable, the original collection is unchanged.
 
 
 ### Collection.prototype.isValid
 
 ##### `collection.isValid()`
 
-Return `true` or `false` depending on whether all models are valid.
+Returns `true` or `false` depending on whether all models are valid.
 
 
 ### Collection.prototype.map
 
 ##### `collection.map(callback, thisArg)`
 
-Return a new Array of values by mapping each model in the collection through a transformation callback function. The callback accepts the following arguments:
+Returns a new Array of values by mapping each model in the collection through a transformation callback function. The callback accepts the following arguments:
 
 * `model` - The current model being processed. (Optional)
 * `index` - The index of the current model positioned by insertion order. (Optional)
@@ -452,7 +452,7 @@ Optionally, the callback may be given a thisArg to use as `this` when executing.
 
 ##### `collection.toJSON()`
 
-Return an array of the collection's models for JSON stringification by leveraging `model.toJSON()`.
+Returns an array of the collection's models for JSON stringification by leveraging `model.toJSON()`.
 
 The name of this method is a bit confusing, as it doesn't actually return a JSON string. Unfortunately, that's the way the JavaScript API for [JSON.stringify](https://developer.mozilla.org/en-US/docs/JSON#toJSON()_method) works.
 
