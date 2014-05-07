@@ -96,18 +96,18 @@ class Collection
     models = (model for model, idx in @models when index isnt idx)
     new @constructor(models)
 
-  map: (callback, thisArg) ->
-    @models.map(callback, thisArg)
-
-  toJSON: ->
-    model.toJSON() for model in @models
-
   validate: ->
     models = (model.validate() for model in @models)
     new @constructor(models)
 
   isValid: ->
     @models.reduce ((a, e) -> a and e.isValid()), true
+
+  map: (callback, thisArg) ->
+    @models.map(callback, thisArg)
+
+  toJSON: ->
+    model.toJSON() for model in @models
 
 Frozen =
   Model: Model

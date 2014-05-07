@@ -86,7 +86,7 @@ user.errors
 
 ##### `new Frozen.Model(attributes, force = false)`
 
-To create an instance of a model, simply pass in key-value attributes.
+Return a new model with the given key-value attributes.
 
 ```coffee
 model = new Frozen.Model({ name: 'Elsa', role: 'queen' })
@@ -96,7 +96,7 @@ model.attributes
 
 #### Validations
 
-Because instances of **Frozen.Model** are immutable, validations are performed on construction.
+Because model attributes are immutable, validations are performed on construction.
 
 ```coffee
 class User extends Frozen.Model
@@ -199,7 +199,7 @@ user.errors
 
 ##### `model.get(key)`
 
-Given a key, fetch the value of a model's attribute.
+Given a key, return the value of a model's attribute.
 
 ```coffee
 model = new Frozen.Model({ name: 'Elsa' })
@@ -213,7 +213,7 @@ model.get('age')
 
 ##### `model.set(attributes, force = @force)`
 
-Create a new instance by merging new key-value attributes into the model's attributes. Because instances of **Frozen.Model** are immutable, the original model is unchanged.
+Return a new model by merging the given attributes into the model's attributes. Because model attributes are immutable, the original model is unchanged.
 
 ```coffee
 model = new Frozen.Model({ name: 'Anna' })
@@ -245,7 +245,7 @@ queen.force
 
 ##### `model.validate()`
 
-Create a new model with forced validations of both `null` and `undefined` attributes.
+Return a new model with forced validations of both `null` and `undefined` attributes. Because model errors are immutable, the original model is unchanged.
 
 ```coffee
 class User extends Frozen.Model
@@ -257,16 +257,19 @@ user = new User()
 user.errors
 #=> {}
 
-user = user.validate()
-user.errors
+forced_user = user.validate()
+forced_user.errors
 #=> { name: 'Required' }
+
+user.errors
+#=> {}
 ```
 
 ### isValid
 
 ##### `model.isValid()`
 
-Returns `true` or `false` whether or not the model has any errors.
+Return `true` or `false` depending on whether the model has any errors.
 
 ```coffee
 class User extends Frozen.Model
@@ -291,7 +294,7 @@ user.isValid()
 
 ##### `model.toJSON()`
 
-Returns a shallow copy of a model's key-value attributes for JSON stringification.
+Return a shallow copy of the model's attributes for JSON stringification.
 
 The name of this method is a bit confusing, as it doesn't actually return a JSON string. Unfortunately, that's the way the JavaScript API for [JSON.stringify](https://developer.mozilla.org/en-US/docs/JSON#toJSON()_method) works.
 
@@ -301,7 +304,7 @@ model.toJSON()
 #=> { name: 'Anna', princess: true }
 ```
 
-Includes a shallow copy of a model's associated key-value attributes as well.
+Includes a shallow copy of the model's associated attributes as well.
 
 ```coffee
 class Profile extends Frozen.Model
@@ -347,46 +350,84 @@ creature.isValid()
 
 ##### `new Frozen.Collection(models = [])`
 
+Return a new collection with the given array of models.
+
+
+If an array of attributes is given, new models are instantiated.
+
+
+To instantiate custom models, provide a `model` property.
+
 
 ### at
 
 ##### `collection.at(index)`
+
+Return the model at the given index positioned by insertion order.
 
 
 ### add
 
 ##### `collection.add(model = {})`
 
+Return a new collection with the given model appended to the end. Because collection models are immutable, the original collection is unchanged.
+
+
+If attributes are given, a new model is instantiated.
+
+
+To instantiate a custom model, provide a `model` property.
+
 
 ### change
 
 ##### `collection.change(index, attributes)`
+
+Return a new collection by merging the given attributes into the collection's model at the given index. Because collection models are immutable, the original collection is unchanged.
 
 
 ### remove
 
 ##### `collection.remove(index)`
 
+Return a new collection without the model at the given index. Because collection models are immutable, the original collection is unchanged.
+
+
+### validate
+
+##### `collection.validate()`
+
+Return a new collection with forced validations for all models. Because collection models are immutable, the original collection is unchanged.
+
+
+### isValid
+
+##### `collection.isValid()`
+
+Return `true` or `false` depending on whether all models are valid.
+
 
 ### map
 
 ##### `collection.map(callback, thisArg)`
+
+Return a new Array of values by mapping each model in the collection through a transformation callback function. The callback accepts the following arguments:
+
+* `model` - The current model being processed. (Optional)
+* `index` - The index of the current model positioned by insertion order. (Optional)
+* `models` - The array of models in the collection. (Optional)
+
+
+Optionally, the callback may be given a thisArg to use as `this` when executing.
 
 
 ### toJSON
 
 ##### `collection.toJSON()`
 
+Return an array of the collection's models for JSON stringification by leveraging `model.toJSON()`.
 
-### validate
-
-
-##### `collection.validate()`
-
-
-### isValid
-
-##### `collection.isValid()`
+The name of this method is a bit confusing, as it doesn't actually return a JSON string. Unfortunately, that's the way the JavaScript API for [JSON.stringify](https://developer.mozilla.org/en-US/docs/JSON#toJSON()_method) works.
 
 
 ## Thank you
