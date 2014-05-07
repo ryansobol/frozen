@@ -82,7 +82,7 @@ user.errors
 #=> { name: 'Required' }
 ```
 
-### Frozen.Model.prototype.constructor
+### Model.prototype.constructor
 
 ##### `new Frozen.Model(attributes, force = false)`
 
@@ -94,7 +94,7 @@ model.attributes
 #=> { name: 'Elsa', role: 'queen' }
 ```
 
-#### Frozen.Model Validations
+#### Model Validations
 
 Because model attributes are immutable, validations are performed on construction.
 
@@ -142,7 +142,7 @@ user.force
 #=> true
 ```
 
-#### Frozen.Model Associations
+#### Model Associations
 
 To create structured attributes, associate them with a **Frozen.Model** or **Frozen.Collection**.
 
@@ -195,7 +195,7 @@ user.errors
 #=> { profile: { type: 'Required' } }
 ```
 
-### Frozen.Model.prototype.get
+### Model.prototype.get
 
 ##### `model.get(key)`
 
@@ -209,7 +209,7 @@ model.get('age')
 #=> undefined
 ```
 
-### Frozen.Model.prototype.set
+### Model.prototype.set
 
 ##### `model.set(attributes, force = @force)`
 
@@ -241,7 +241,7 @@ queen.force
 #=> true
 ```
 
-### Frozen.Model.prototype.validate
+### Model.prototype.validate
 
 ##### `model.validate()`
 
@@ -265,7 +265,7 @@ user.errors
 #=> {}
 ```
 
-### Frozen.Model.prototype.isValid
+### Model.prototype.isValid
 
 ##### `model.isValid()`
 
@@ -290,7 +290,7 @@ user.isValid()
 #=> false
 ```
 
-### Frozen.Model.prototype.toJSON
+### Model.prototype.toJSON
 
 ##### `model.toJSON()`
 
@@ -346,7 +346,7 @@ creature.isValid()
 #=> true
 ```
 
-### constructor
+### Collection.prototype.constructor
 
 ##### `new Frozen.Collection(models = [])`
 
@@ -359,14 +359,14 @@ If an array of attributes is given, new models are instantiated.
 To instantiate custom models, provide a `model` property.
 
 
-### at
+### Collection.prototype.at
 
 ##### `collection.at(index)`
 
 Return the model at the given index positioned by insertion order.
 
 
-### add
+### Collection.prototype.add
 
 ##### `collection.add(model = {})`
 
@@ -379,35 +379,35 @@ If attributes are given, a new model is instantiated.
 To instantiate a custom model, provide a `model` property.
 
 
-### change
+### Collection.prototype.change
 
 ##### `collection.change(index, attributes)`
 
 Return a new collection by merging the given attributes into the collection's model at the given index. Because collection models are immutable, the original collection is unchanged.
 
 
-### remove
+### Collection.prototype.remove
 
 ##### `collection.remove(index)`
 
 Return a new collection without the model at the given index. Because collection models are immutable, the original collection is unchanged.
 
 
-### validate
+### Collection.prototype.validate
 
 ##### `collection.validate()`
 
 Return a new collection with forced validations for all models. Because collection models are immutable, the original collection is unchanged.
 
 
-### isValid
+### Collection.prototype.isValid
 
 ##### `collection.isValid()`
 
 Return `true` or `false` depending on whether all models are valid.
 
 
-### map
+### Collection.prototype.map
 
 ##### `collection.map(callback, thisArg)`
 
@@ -421,7 +421,7 @@ Return a new Array of values by mapping each model in the collection through a t
 Optionally, the callback may be given a thisArg to use as `this` when executing.
 
 
-### toJSON
+### Collection.prototype.toJSON
 
 ##### `collection.toJSON()`
 
