@@ -104,7 +104,7 @@ user.errors
 
 ### Model.prototype.constructor
 
-##### `new Frozen.Model(attributes, valid = true)`
+##### `new Frozen.Model(attributes, options = { validate: true })`
 
 Returns a new model with the given key-value attributes.
 
@@ -151,7 +151,7 @@ user.attributes
 user.errors
 #=> { name: 'Required' }
 
-user = new User({ name: '' }, false)
+user = new User({ name: '' }, { validate: false })
 user.attributes
 #=> { name: '' }
 user.errors
@@ -172,7 +172,7 @@ user.attributes
 user.errors
 #=> {}
 
-user = new User({}, 'force')
+user = new User({}, { validate: 'force' })
 user.attributes
 #=> {}
 user.errors
@@ -248,7 +248,7 @@ model.get('age')
 
 ### Model.prototype.set
 
-##### `model.set(attributes, force = @force)`
+##### `model.set(attributes, options = @options)`
 
 Returns a new model by merging the given attributes into the model's attributes. Because model attributes are immutable, the original model is unchanged.
 
@@ -262,25 +262,25 @@ model.get('name')
 #=> 'Anna'
 ```
 
-Unless specified, the new model inherits the same validation rules as the original model.
+Unless specified, the new model inherits the same options as the original model.
 
 ```coffee
 mountaineer = new Frozen.Model({ name: 'Kristoff' })
-mountaineer.force
-#=> false
+mountaineer.options
+#=> { validate: true }
 
 princess = mountaineer.set({ name: 'Anna' })
-princess.force
-#=> false
+princess.options
+#=> { validate: true }
 
-queen = princess.set({ name: 'Elsa' }, true)
-queen.force
-#=> true
+queen = princess.set({ name: 'Elsa' }, { validate: false })
+queen.options
+#=> { validate: false }
 ```
 
 ### Model.prototype.validate
 
-##### `model.validate(validation = 'force')`
+##### `model.validate(option = 'force')`
 
 Returns a new model with forced validations of both `null` and `undefined` attributes. Because model errors are immutable, the original model is unchanged.
 
@@ -310,7 +310,7 @@ class User extends Frozen.Model
     name:
       required: true
 
-disabled = new User({ name: '' }, false)
+disabled = new User({ name: '' }, { validate: false })
 disabled.errors
 #=> {}
 

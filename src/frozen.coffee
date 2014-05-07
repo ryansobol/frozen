@@ -12,7 +12,7 @@ extend = (to, froms...) ->
   to
 
 class Model
-  constructor: (attributes, valid = true) ->
+  constructor: (attributes, options = { validate: true }) ->
     attributes = extend({}, attributes)
     errors = {}
 
@@ -21,15 +21,15 @@ class Model
       continue unless value?
 
       if value instanceof association
-        continue if valid is value.valid
+        continue if options.validate is value.options.validate
         value = value.attributes
 
-      attributes[key] = new association(value, valid)
+      attributes[key] = new association(value, options)
 
-    if valid
+    if options.validate
       for key, validation of @validations
         value = attributes[key]
-        continue unless valid is 'force' or value?
+        continue unless options.validate is 'force' or value?
 
         for type, opts of validation
           continue unless opts
@@ -45,17 +45,18 @@ class Model
 
     Object.defineProperty(@, 'attributes', value: Object.freeze(attributes))
     Object.defineProperty(@, 'errors', value: Object.freeze(errors))
-    Object.defineProperty(@, 'valid', value: valid)
+    Object.defineProperty(@, 'options', value: options)
 
   get: (key) ->
     @attributes[key]
 
-  set: (attributes, valid = @valid) ->
+  set: (attributes, options = @options) ->
     attributes = extend({}, @attributes, attributes)
-    new @constructor(attributes, valid)
+    new @constructor(attributes, options)
 
-  validate: (valid = 'force') ->
-    new @constructor(@attributes, valid)
+  validate: (option = 'force') ->
+    options = extend({}, @options, { validate: option })
+    new @constructor(@attributes, options)
 
   isValid: ->
     Object.keys(@errors).length is 0
