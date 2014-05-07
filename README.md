@@ -47,9 +47,24 @@ royals.at(0)
 #=> Frozen.Model({ name: 'Elsa' })
 ```
 
-## Why
+## Introduction
 
-Speed up your React application _and_ your development time by using immutable data structures with familiar APIs.
+I wrote Frozen for two reasons -- faster React performance and faster development time.
+
+[INSERT RATIONALE FOR IMMUTABLE DATA STRUCTURES WITH REACT]
+
+[INSERT RATIONALE ON BACKBONE'S DATA MODELING]
+
+While it's probably not bug free, Frozen has a comprehensive test suite. I'm using Frozen in a production environment without any issues.
+
+Please be aware that Frozen is pre-1.0 software. This means function signatures or behavior may change. If a breaking change is necessary, I'll be sure to give a deprecation warning that includes a fix and when the feature will be removed.
+
+
+## Contributing
+
+There are a bunch of Backbone features that I'd like to see ported over. If you create a fork, please consider submitting a pull request.
+
+In your pull request, please make a strong case as to why the changes are necessary.  Providing example code and tests significantly increases the chances your pull request is accepted.
 
 
 ## Frozen.Model
