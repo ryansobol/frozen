@@ -82,7 +82,7 @@ user.errors
 #=> { name: 'Required' }
 ```
 
-### constructor
+### Frozen.Model.prototype.constructor
 
 ##### `new Frozen.Model(attributes, force = false)`
 
@@ -94,7 +94,7 @@ model.attributes
 #=> { name: 'Elsa', role: 'queen' }
 ```
 
-#### Validations
+#### Frozen.Model Validations
 
 Because model attributes are immutable, validations are performed on construction.
 
@@ -142,7 +142,7 @@ user.force
 #=> true
 ```
 
-#### Associations
+#### Frozen.Model Associations
 
 To create structured attributes, associate them with a **Frozen.Model** or **Frozen.Collection**.
 
@@ -195,7 +195,7 @@ user.errors
 #=> { profile: { type: 'Required' } }
 ```
 
-### get
+### Frozen.Model.prototype.get
 
 ##### `model.get(key)`
 
@@ -209,7 +209,7 @@ model.get('age')
 #=> undefined
 ```
 
-### set
+### Frozen.Model.prototype.set
 
 ##### `model.set(attributes, force = @force)`
 
@@ -241,7 +241,7 @@ queen.force
 #=> true
 ```
 
-### validate
+### Frozen.Model.prototype.validate
 
 ##### `model.validate()`
 
@@ -265,7 +265,7 @@ user.errors
 #=> {}
 ```
 
-### isValid
+### Frozen.Model.prototype.isValid
 
 ##### `model.isValid()`
 
@@ -290,7 +290,7 @@ user.isValid()
 #=> false
 ```
 
-### toJSON
+### Frozen.Model.prototype.toJSON
 
 ##### `model.toJSON()`
 
