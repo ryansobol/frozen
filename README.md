@@ -34,7 +34,7 @@ royals = new Frozen.Collection({ name: 'Elsa' })
 royals.at(0)
 #=> Frozen.Model({ name: 'Elsa' })
 
-royals.add({name: 'Anna'})
+royals.push({name: 'Anna'})
 #=> new Frozen.Collection([{ name: 'Elsa' }, { name: 'Anna' }])
 
 royals.change(0, { name: 'Snow Queen' })
@@ -386,9 +386,16 @@ To instantiate custom models, provide a `model` property.
 Return the model at the given index positioned by insertion order.
 
 
-### Collection.prototype.add
+### Collection.prototype.insert
 
-##### `collection.add(model = {})`
+##### `collection.insert(index, model = {})`
+
+Return a new collection with the given model inserted at the given index positioned by insertion order. Because collection models are immutable, the original collection is unchanged.
+
+
+### Collection.prototype.push
+
+##### `collection.push(model = {})`
 
 Return a new collection with the given model appended to the end. Because collection models are immutable, the original collection is unchanged.
 

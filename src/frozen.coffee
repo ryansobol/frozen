@@ -81,10 +81,15 @@ class Collection
   at: (index) ->
     @models[index]
 
-  add: (model = {}) ->
+  insert: (index, model = {}) ->
     model = new @model(model) unless model instanceof Model
-    models = @models.concat([model])
+    models = @models[...index]
+    models.push(model)
+    models = models.concat(@models[index..])
     new @constructor(models)
+
+  push: (model = {}) ->
+    @insert(@length, model)
 
   change: (index, attributes) ->
     models = for model, idx in @models
