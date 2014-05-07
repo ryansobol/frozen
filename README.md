@@ -54,7 +54,7 @@ Speed up your React application _and_ your development time by using immutable d
 
 ## Frozen.Model
 
-Instances of **Frozen.Model** represent a single entity in an application's state. They consist of immutable key-value **attributes** and possible validation **errors**. They also have APIs for retrieving a single attribute, constructing new models, and converting attributes to JSON.
+Instances of **Frozen.Model** represent a single entity in an application's state. They consist of immutable key-value **attributes** and validation **errors**. They also have APIs for retrieving a single attribute, constructing new models, and converting attributes to JSON.
 
 Custom models extend **Frozen.Model** with domain-specific validation rules, associated attributes, computed properties, etc.
 
