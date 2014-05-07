@@ -2,6 +2,18 @@
 
 **Frozen** provides immutable models and collections for Node and browser apps.
 
+- The README
+- The wiki
+- The article(s)
+- The issue tracker
+- The stackoverflow page
+- The twitter account
+
+The MIT license - Copyright (c) 2014 [Kurbo Health](http://kurbo.com/) - Author [Ryan Sobol](http://ryansobol.com)
+
+
+## Example
+
 ```coffee
 princess = new Frozen.Model({ name: 'Anna' })
 princess.get('name')  
@@ -38,13 +50,6 @@ royals.at(0)
 ## Why
 
 Speed up your React application _and_ your development time by using immutable data structures with familiar APIs.
-
-
-## Guides
-
-- The README
-- The wiki
-- The article(s)
 
 
 ## Frozen.Model
@@ -436,7 +441,3 @@ Without these technologies, **Frozen** would not exist.
 
 - [React](http://facebook.github.io/react/)
 - [Backbone.js](http://backbonejs.org/)
-
----
-
-The MIT license - Copyright (c) 2014 [Kurbo Health](http://kurbo.com/) - Author [Ryan Sobol](http://ryansobol.com)
