@@ -72,12 +72,11 @@ class Collection
   constructor: (models = []) ->
     models = [models] unless models instanceof Array
 
-    @models = for model in models
+    models = for model in models
       if model instanceof Model then model else new @model(model)
 
-    @length = @models.length
-
-    Object.freeze(@models)
+    Object.defineProperty(@, 'models', value: Object.freeze(models))
+    Object.defineProperty(@, 'length', value: models.length)
 
   at: (index) ->
     @models[index]
