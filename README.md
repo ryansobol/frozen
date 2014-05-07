@@ -104,7 +104,7 @@ user.errors
 
 ### Model.prototype.constructor
 
-##### `new Frozen.Model(attributes, force = false)`
+##### `new Frozen.Model(attributes, valid = true)`
 
 Returns a new model with the given key-value attributes.
 
@@ -124,20 +124,20 @@ class User extends Frozen.Model
     name:
       required: true
 
-user = new User({ name: 'Elsa', role: 'queen' })
+user = new User({ name: 'Elsa' })
 user.attributes
-#=> { name: 'Elsa', role: 'queen' }
+#=> { name: 'Elsa' }
 user.errors
 #=> {}
 
-user = new User({ name: '', role: 'queen' })
+user = new User({ name: '' })
 user.attributes
-#=> { name: '', role: 'queen' }
+#=> { name: '' }
 user.errors
 #=> { name: 'Required' }
 ```
 
-Optionally, validations can be forced on both `null` and `undefined` attributes.
+Optionally, validations can be disabled on construction.
 
 ```coffee
 class User extends Frozen.Model
@@ -145,21 +145,38 @@ class User extends Frozen.Model
     name:
       required: true
 
-user = new User({ role: 'queen' })
+user = new User({ name: '' })
 user.attributes
-#=> { role: 'queen' }
-user.errors
-#=> {}
-user.force
-#=> false
-
-user = new User({ role: 'queen' }, true)
-user.attributes
-#=> { role: 'queen' }
+#=> { name: '' }
 user.errors
 #=> { name: 'Required' }
-user.force
-#=> true
+
+user = new User({ name: '' }, false)
+user.attributes
+#=> { name: '' }
+user.errors
+#=> {}
+```
+
+Or, validations can be forced on both `null` and `undefined` attributes on construction.
+
+```coffee
+class User extends Frozen.Model
+  validations:
+    name:
+      required: true
+
+user = new User({})
+user.attributes
+#=> {}
+user.errors
+#=> {}
+
+user = new User({}, 'force')
+user.attributes
+#=> {}
+user.errors
+#=> { name: 'Required' }
 ```
 
 #### Model Associations
@@ -263,7 +280,7 @@ queen.force
 
 ### Model.prototype.validate
 
-##### `model.validate()`
+##### `model.validate(validation = 'force')`
 
 Returns a new model with forced validations of both `null` and `undefined` attributes. Because model errors are immutable, the original model is unchanged.
 
@@ -277,11 +294,31 @@ user = new User()
 user.errors
 #=> {}
 
-forced_user = user.validate()
-forced_user.errors
+forced = user.validate()
+forced.errors
 #=> { name: 'Required' }
 
 user.errors
+#=> {}
+```
+
+Optionally, returns a new model with validations enabled or disabled. Because model errors are immutable, the original model is unchanged.
+
+```coffee
+class User extends Frozen.Model
+  validations:
+    name:
+      required: true
+
+disabled = new User({ name: '' }, false)
+disabled.errors
+#=> {}
+
+enabled = user.validate(true)
+enabled.errors
+#=> { name: 'Required' }
+
+disabled.errors
 #=> {}
 ```
 

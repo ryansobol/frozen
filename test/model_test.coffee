@@ -30,8 +30,8 @@ describe 'Model', ->
       it 'has the correct attributes', ->
         expect(@person.attributes).to.eql {}
 
-      it 'has the correct force', ->
-        expect(@person.force).to.be false
+      it 'has the correct valid', ->
+        expect(@person.valid).to.be true
 
       it 'has the correct errors', ->
         expect(@person.errors).to.eql {}
@@ -42,11 +42,11 @@ describe 'Model', ->
       it 'returns the correct validated attributes', ->
         expect(@validated.attributes).to.eql {}
 
+      it 'returns the correct validated valid', ->
+        expect(@validated.valid).to.be 'force'
+
       it 'returns the correct validated errors', ->
         expect(@validated.errors).to.eql { firstName: 'Required' }
-
-      it 'returns the correct validated force', ->
-        expect(@validated.force).to.be true
 
       it 'returns the correct validated validity', ->
         expect(@validated.isValid()).to.be false
@@ -56,15 +56,15 @@ describe 'Model', ->
 
     describe 'given no attributes and force validation', ->
       beforeEach ->
-        @person = new Person({}, true)
+        @person = new Person({}, 'force')
         @validated = @person.validate()
         @json = @person.toJSON()
 
       it 'has the correct attributes', ->
         expect(@person.attributes).to.eql {}
 
-      it 'has the correct force', ->
-        expect(@person.force).to.be true
+      it 'has the correct valid', ->
+        expect(@person.valid).to.be 'force'
 
       it 'has the correct errors', ->
         expect(@person.errors).to.eql { firstName: 'Required' }
@@ -75,11 +75,11 @@ describe 'Model', ->
       it 'returns the correct validated attributes', ->
         expect(@validated.attributes).to.eql {}
 
+      it 'returns the correct validated valid', ->
+        expect(@validated.valid).to.be 'force'
+
       it 'returns the correct validated errors', ->
         expect(@validated.errors).to.eql { firstName: 'Required' }
-
-      it 'returns the correct validated force', ->
-        expect(@validated.force).to.be true
 
       it 'returns the correct validated validity', ->
         expect(@validated.isValid()).to.be false
@@ -97,8 +97,8 @@ describe 'Model', ->
       it 'has the correct attributes', ->
         expect(@person.attributes).to.eql @attrs
 
-      it 'has the correct force', ->
-        expect(@person.force).to.eql false
+      it 'has the correct valid', ->
+        expect(@person.valid).to.be true
 
       it 'has the correct errors', ->
         expect(@person.errors).to.eql {}
@@ -109,8 +109,8 @@ describe 'Model', ->
       it 'returns the correct validated attributes', ->
         expect(@validated.attributes).to.eql @attrs
 
-      it 'returns the correct validated force', ->
-        expect(@validated.force).to.be true
+      it 'returns the correct validated valid', ->
+        expect(@validated.valid).to.be 'force'
 
       it 'returns the correct validated errors', ->
         expect(@validated.errors).to.eql {}
@@ -131,8 +131,8 @@ describe 'Model', ->
       it 'has the correct attributes', ->
         expect(@person.attributes).to.eql @attrs
 
-      it 'has the correct force', ->
-        expect(@person.force).to.be false
+      it 'has the correct valid', ->
+        expect(@person.valid).to.be true
 
       it 'has the correct errors', ->
         expect(@person.errors).to.eql { firstName: 'Required' }
@@ -143,8 +143,42 @@ describe 'Model', ->
       it 'returns the correct validated attributes', ->
         expect(@validated.attributes).to.eql @attrs
 
-      it 'returns the correct validated force', ->
-        expect(@validated.force).to.be true
+      it 'returns the correct validated valid', ->
+        expect(@validated.valid).to.be 'force'
+
+      it 'returns the correct validated errors', ->
+        expect(@validated.errors).to.eql { firstName: 'Required' }
+
+      it 'returns the correct validated validity', ->
+        expect(@validated.isValid()).to.be false
+
+      it 'returns the correct JSON', ->
+        expect(@json).to.eql @person.attributes
+
+    describe 'given invalid attributes without validation', ->
+      beforeEach ->
+        @attrs = { firstName: '' }
+        @person = new Person(@attrs, false)
+        @validated = @person.validate()
+        @json = @person.toJSON()
+
+      it 'has the correct attributes', ->
+        expect(@person.attributes).to.eql @attrs
+
+      it 'has the correct valid', ->
+        expect(@person.valid).to.be false
+
+      it 'has the correct errors', ->
+        expect(@person.errors).to.eql {}
+
+      it 'has the correct validity', ->
+        expect(@person.isValid()).to.be true
+
+      it 'returns the correct validated attributes', ->
+        expect(@validated.attributes).to.eql @attrs
+
+      it 'returns the correct validated valid', ->
+        expect(@validated.valid).to.be 'force'
 
       it 'returns the correct validated errors', ->
         expect(@validated.errors).to.eql { firstName: 'Required' }
@@ -166,8 +200,8 @@ describe 'Model', ->
         expected = { firstName: 'Sierra', address: new Address() }
         expect(@person.attributes).to.eql expected
 
-      it 'has the correct force', ->
-        expect(@person.force).to.be false
+      it 'has the correct valid', ->
+        expect(@person.valid).to.be true
 
       it 'has the correct errors', ->
         expect(@person.errors).to.eql {}
@@ -178,11 +212,11 @@ describe 'Model', ->
       it 'returns the correct validated attributes', ->
         expected =
           firstName: 'Sierra'
-          address: new Address({}, true)
+          address: new Address({}, 'force')
         expect(@validated.attributes).to.eql expected
 
-      it 'returns the correct validated force', ->
-        expect(@validated.force).to.be true
+      it 'returns the correct validated valid', ->
+        expect(@validated.valid).to.be 'force'
 
       it 'returns the correct validated errors', ->
         expect(@validated.errors).to.eql { address: { zipcode: 'Required' } }
@@ -196,18 +230,18 @@ describe 'Model', ->
     describe 'given no coerseable attributes and force validation', ->
       beforeEach ->
         @attrs = { firstName: 'Sierra', address: {} }
-        @person = new Person(@attrs, true)
+        @person = new Person(@attrs, 'force')
         @validated = @person.validate()
         @json = @person.toJSON()
 
       it 'has the correct attributes', ->
         expected =
           firstName: 'Sierra'
-          address: new Address({}, true)
+          address: new Address({}, 'force')
         expect(@person.attributes).to.eql expected
 
-      it 'has the correct force', ->
-        expect(@person.force).to.be true
+      it 'has the correct valid', ->
+        expect(@person.valid).to.be 'force'
 
       it 'has the correct errors', ->
         expect(@person.errors).to.eql { address: { zipcode: 'Required' } }
@@ -218,11 +252,11 @@ describe 'Model', ->
       it 'returns the correct validated attributes', ->
         expected =
           firstName: 'Sierra'
-          address: new Address({}, true)
+          address: new Address({}, 'force')
         expect(@validated.attributes).to.eql expected
 
-      it 'returns the correct validated force', ->
-        expect(@validated.force).to.be true
+      it 'returns the correct validated valid', ->
+        expect(@validated.valid).to.be 'force'
 
       it 'returns the correct validated errors', ->
         expect(@validated.errors).to.eql { address: { zipcode: 'Required' } }
@@ -244,8 +278,8 @@ describe 'Model', ->
         expected = { firstName: 'Sierra', address: new Address(@attrs) }
         expect(@person.attributes).to.eql expected
 
-      it 'has the correct force', ->
-        expect(@person.force).to.be false
+      it 'has the correct valid', ->
+        expect(@person.valid).to.be true
 
       it 'has the correct errors', ->
         expect(@person.errors).to.eql {}
@@ -256,11 +290,11 @@ describe 'Model', ->
       it 'returns the correct validated attributes', ->
         expected =
           firstName: 'Sierra'
-          address: new Address(@attrs, true)
+          address: new Address(@attrs, 'force')
         expect(@validated.attributes).to.eql expected
 
-      it 'returns the correct validated force', ->
-        expect(@validated.force).to.be true
+      it 'returns the correct validated valid', ->
+        expect(@validated.valid).to.be 'force'
 
       it 'returns the correct validated errors', ->
         expect(@validated.errors).to.eql {}
@@ -282,8 +316,8 @@ describe 'Model', ->
         expected = { firstName: 'Sierra', address: new Address(@attrs) }
         expect(@person.attributes).to.eql expected
 
-      it 'has the correct force', ->
-        expect(@person.force).to.be false
+      it 'has the correct valid', ->
+        expect(@person.valid).to.be true
 
       it 'has the correct errors', ->
         expect(@person.errors).to.eql { address: { zipcode: 'Required' } }
@@ -294,11 +328,49 @@ describe 'Model', ->
       it 'returns the correct validated attributes', ->
         expected =
           firstName: 'Sierra'
-          address: new Address(@attrs, true)
+          address: new Address(@attrs, 'force')
         expect(@validated.attributes).to.eql expected
 
-      it 'returns the correct validated force', ->
-        expect(@validated.force).to.be true
+      it 'returns the correct validated valid', ->
+        expect(@validated.valid).to.be 'force'
+
+      it 'returns the correct validated errors', ->
+        expect(@validated.errors).to.eql { address: { zipcode: 'Required' } }
+
+      it 'returns the correct validated validity', ->
+        expect(@validated.isValid()).to.be false
+
+      it 'returns the correct JSON', ->
+        expect(@json).to.eql { firstName: 'Sierra', address: @attrs }
+
+    describe 'given invalid coerseable attributes without validation', ->
+      beforeEach ->
+        @attrs = { zipcode: '' }
+        @person = new Person(firstName: 'Sierra', address: @attrs, false)
+        @validated = @person.validate()
+        @json = @person.toJSON()
+
+      it 'has the correct attributes', ->
+        expected = { firstName: 'Sierra', address: new Address(@attrs, false) }
+        expect(@person.attributes).to.eql expected
+
+      it 'has the correct valid', ->
+        expect(@person.valid).to.be false
+
+      it 'has the correct errors', ->
+        expect(@person.errors).to.eql {}
+
+      it 'has the correct validity', ->
+        expect(@person.isValid()).to.be true
+
+      it 'returns the correct validated attributes', ->
+        expected =
+          firstName: 'Sierra'
+          address: new Address(@attrs, 'force')
+        expect(@validated.attributes).to.eql expected
+
+      it 'returns the correct validated valid', ->
+        expect(@validated.valid).to.be 'force'
 
       it 'returns the correct validated errors', ->
         expect(@validated.errors).to.eql { address: { zipcode: 'Required' } }
@@ -324,8 +396,8 @@ describe 'Model', ->
       it 'has the correct address', ->
         expect(@person.get('address')).to.be @address
 
-      it 'has the correct force', ->
-        expect(@person.force).to.be false
+      it 'has the correct valid', ->
+        expect(@person.valid).to.be true
 
       it 'has the correct errors', ->
         expect(@person.errors).to.eql {}
@@ -336,14 +408,14 @@ describe 'Model', ->
       it 'returns the correct validated attributes', ->
         expected =
           firstName: 'Sierra'
-          address: new Address({}, true)
+          address: new Address({}, 'force')
         expect(@validated.attributes).to.eql expected
 
       it 'has the correct validated address', ->
         expect(@validated.get('address')).not.to.be @address
 
-      it 'returns the correct validated force', ->
-        expect(@validated.force).to.be true
+      it 'returns the correct validated valid', ->
+        expect(@validated.valid).to.be 'force'
 
       it 'returns the correct validated errors', ->
         expect(@validated.errors).to.eql { address: { zipcode: 'Required' } }
@@ -358,21 +430,21 @@ describe 'Model', ->
       beforeEach ->
         @address = new Address()
         @attrs = { firstName: 'Sierra', address: @address }
-        @person = new Person(@attrs, true)
+        @person = new Person(@attrs, 'force')
         @validated = @person.validate()
         @json = @person.toJSON()
 
       it 'has the correct attributes', ->
         expected =
           firstName: 'Sierra'
-          address: new Address({}, true)
+          address: new Address({}, 'force')
         expect(@person.attributes).to.eql expected
 
       it 'has the correct address', ->
         expect(@person.get('address')).not.to.be @address
 
-      it 'has the correct force', ->
-        expect(@person.force).to.be true
+      it 'has the correct valid', ->
+        expect(@person.valid).to.be 'force'
 
       it 'has the correct errors', ->
         expect(@person.errors).to.eql { address: { zipcode: 'Required' } }
@@ -383,14 +455,14 @@ describe 'Model', ->
       it 'returns the correct validated attributes', ->
         expected =
           firstName: 'Sierra'
-          address: new Address({}, true)
+          address: new Address({}, 'force')
         expect(@validated.attributes).to.eql expected
 
       it 'has the correct validated address', ->
         expect(@person.get('address')).not.to.be @address
 
-      it 'returns the correct validated force', ->
-        expect(@validated.force).to.be true
+      it 'returns the correct validated valid', ->
+        expect(@validated.valid).to.be 'force'
 
       it 'returns the correct validated errors', ->
         expect(@validated.errors).to.eql { address: { zipcode: 'Required' } }
@@ -416,8 +488,8 @@ describe 'Model', ->
       it 'has the correct address', ->
         expect(@person.get('address')).to.be @address
 
-      it 'has the correct force', ->
-        expect(@person.force).to.be false
+      it 'has the correct valid', ->
+        expect(@person.valid).to.be true
 
       it 'has the correct errors', ->
         expect(@person.errors).to.eql {}
@@ -428,14 +500,14 @@ describe 'Model', ->
       it 'returns the correct validated attributes', ->
         expected =
           firstName: 'Sierra'
-          address: new Address(@attrs, true)
+          address: new Address(@attrs, 'force')
         expect(@validated.attributes).to.eql expected
 
       it 'returns the correct validated address', ->
         expect(@validated.get('address')).not.to.be @address
 
-      it 'returns the correct validated force', ->
-        expect(@validated.force).to.be true
+      it 'returns the correct validated valid', ->
+        expect(@validated.valid).to.be 'force'
 
       it 'returns the correct validated errors', ->
         expect(@validated.errors).to.eql {}
@@ -461,8 +533,8 @@ describe 'Model', ->
       it 'has the correct address', ->
         expect(@person.get('address')).to.be @address
 
-      it 'has the correct force', ->
-        expect(@person.force).to.be false
+      it 'has the correct valid', ->
+        expect(@person.valid).to.be true
 
       it 'has the correct errors', ->
         expect(@person.errors).to.eql { address: { zipcode: 'Required' } }
@@ -473,14 +545,59 @@ describe 'Model', ->
       it 'returns the correct validated attributes', ->
         expected =
           firstName: 'Sierra'
-          address: new Address(@attrs, true)
+          address: new Address(@attrs, 'force')
         expect(@validated.attributes).to.eql expected
 
       it 'returns the correct validated address', ->
         expect(@validated.get('address')).not.to.be @address
 
-      it 'returns the correct validated force', ->
-        expect(@validated.force).to.be true
+      it 'returns the correct validated valid', ->
+        expect(@validated.valid).to.be 'force'
+
+      it 'returns the correct validated errors', ->
+        expect(@validated.errors).to.eql { address: { zipcode: 'Required' } }
+
+      it 'returns the correct validated validity', ->
+        expect(@validated.isValid()).to.be false
+
+      it 'returns the correct JSON', ->
+        expect(@json).to.eql { firstName: 'Sierra', address: @attrs }
+
+    describe 'given invalid coersed attributes without validation', ->
+      beforeEach ->
+        @attrs = { zipcode: '' }
+        @address = new Address(@attrs, false)
+        @person = new Person(firstName: 'Sierra', address: @address, false)
+        @validated = @person.validate()
+        @json = @person.toJSON()
+
+      it 'has the correct attributes', ->
+        expected = { firstName: 'Sierra', address: @address }
+        expect(@person.attributes).to.eql expected
+
+      it 'has the correct address', ->
+        expect(@person.get('address')).to.be @address
+
+      it 'has the correct valid', ->
+        expect(@person.valid).to.be false
+
+      it 'has the correct errors', ->
+        expect(@person.errors).to.eql {}
+
+      it 'has the correct validity', ->
+        expect(@person.isValid()).to.be true
+
+      it 'returns the correct validated attributes', ->
+        expected =
+          firstName: 'Sierra'
+          address: new Address(@attrs, 'force')
+        expect(@validated.attributes).to.eql expected
+
+      it 'returns the correct validated address', ->
+        expect(@validated.get('address')).not.to.be @address
+
+      it 'returns the correct validated valid', ->
+        expect(@validated.valid).to.be 'force'
 
       it 'returns the correct validated errors', ->
         expect(@validated.errors).to.eql { address: { zipcode: 'Required' } }
@@ -514,8 +631,8 @@ describe 'Model', ->
       it 'returns the correct attributes', ->
         expect(@returns.attributes).to.eql {}
 
-      it 'returns the correct force', ->
-        expect(@returns.force).to.be false
+      it 'returns the correct valid', ->
+        expect(@returns.valid).to.be true
 
       it 'returns the correct errors', ->
         expect(@returns.errors).to.eql {}
@@ -526,7 +643,7 @@ describe 'Model', ->
     describe 'given no attributes and force validation', ->
       beforeEach ->
         @person = new Person()
-        @returns = @person.set({}, true)
+        @returns = @person.set({}, 'force')
 
       it 'returns the correct object', ->
         expect(@returns).not.to.be @person
@@ -534,8 +651,8 @@ describe 'Model', ->
       it 'returns the correct attributes', ->
         expect(@returns.attributes).to.eql {}
 
-      it 'returns the correct force', ->
-        expect(@returns.force).to.be true
+      it 'returns the correct valid', ->
+        expect(@returns.valid).to.be 'force'
 
       it 'returns the correct errors', ->
         expect(@returns.errors).to.eql { firstName: 'Required' }
@@ -554,8 +671,8 @@ describe 'Model', ->
       it 'returns the correct attributes', ->
         expect(@returns.attributes).to.eql { firstName: 'Amy' }
 
-      it 'returns the correct force', ->
-        expect(@returns.force).to.be false
+      it 'returns the correct valid', ->
+        expect(@returns.valid).to.be true
 
       it 'returns the correct errors', ->
         expect(@returns.errors).to.eql {}
@@ -574,14 +691,34 @@ describe 'Model', ->
       it 'returns the correct attributes', ->
         expect(@returns.attributes).to.eql { firstName: '' }
 
-      it 'returns the correct force', ->
-        expect(@returns.force).to.be false
+      it 'returns the correct valid', ->
+        expect(@returns.valid).to.be true
 
       it 'returns the correct errors', ->
         expect(@returns.errors).to.eql { firstName: 'Required' }
 
       it 'returns the correct validity', ->
         expect(@returns.isValid()).to.be false
+
+    describe 'given invalid attributes without validation', ->
+      beforeEach ->
+        @person = new Person()
+        @returns = @person.set(firstName: '', false)
+
+      it 'returns the correct object', ->
+        expect(@returns).not.to.be @person
+
+      it 'returns the correct attributes', ->
+        expect(@returns.attributes).to.eql { firstName: '' }
+
+      it 'returns the correct valid', ->
+        expect(@returns.valid).to.be false
+
+      it 'returns the correct errors', ->
+        expect(@returns.errors).to.eql {}
+
+      it 'returns the correct validity', ->
+        expect(@returns.isValid()).to.be true
 
     describe 'given valid coerseable attributes', ->
       beforeEach ->
@@ -595,8 +732,8 @@ describe 'Model', ->
       it 'returns the correct attributes', ->
         expect(@returns.attributes).to.eql { address: new Address(@attrs) }
 
-      it 'returns the correct force', ->
-        expect(@returns.force).to.be false
+      it 'returns the correct valid', ->
+        expect(@returns.valid).to.be true
 
       it 'returns the correct errors', ->
         expect(@returns.errors).to.eql {}
@@ -619,8 +756,8 @@ describe 'Model', ->
       it 'returns the correct validated address', ->
         expect(@returns.get('address')).to.be @address
 
-      it 'returns the correct force', ->
-        expect(@returns.force).to.be false
+      it 'returns the correct valid', ->
+        expect(@returns.valid).to.be true
 
       it 'returns the correct errors', ->
         expect(@returns.errors).to.eql {}
@@ -632,7 +769,7 @@ describe 'Model', ->
       beforeEach ->
         @address = new Address()
         @person = new Person(firstName: 'Amy')
-        @returns = @person.set(address: @address, true)
+        @returns = @person.set(address: @address, 'force')
 
       it 'returns the correct object', ->
         expect(@returns).not.to.be @person
@@ -643,8 +780,8 @@ describe 'Model', ->
       it 'returns the correct validated address', ->
         expect(@returns.get('address')).not.to.be @address
 
-      it 'returns the correct force', ->
-        expect(@returns.force).to.be true
+      it 'returns the correct valid', ->
+        expect(@returns.valid).to.be 'force'
 
       it 'returns the correct errors', ->
         expect(@returns.errors).to.eql { address: { zipcode: 'Required' }}
@@ -668,8 +805,8 @@ describe 'Model', ->
       it 'returns the correct validated address', ->
         expect(@returns.get('address')).to.be @address
 
-      it 'returns the correct force', ->
-        expect(@returns.force).to.be false
+      it 'returns the correct valid', ->
+        expect(@returns.valid).to.be true
 
       it 'returns the correct errors', ->
         expect(@returns.errors).to.eql {}
@@ -693,11 +830,36 @@ describe 'Model', ->
       it 'returns the correct validated address', ->
         expect(@returns.get('address')).to.be @address
 
-      it 'returns the correct force', ->
-        expect(@returns.force).to.be false
+      it 'returns the correct valid', ->
+        expect(@returns.valid).to.be true
 
       it 'returns the correct errors', ->
         expect(@returns.errors).to.eql { address: { zipcode: 'Required' }}
 
       it 'returns the correct validity', ->
         expect(@returns.isValid()).to.be false
+
+    describe 'given invalid coersed attributes without validation', ->
+      beforeEach ->
+        @attrs = { zipcode: '' }
+        @address = new Address(@attrs, false)
+        @person = new Person()
+        @returns = @person.set(address: @address, false)
+
+      it 'returns the correct object', ->
+        expect(@returns).not.to.be @person
+
+      it 'returns the correct attributes', ->
+        expect(@returns.attributes).to.eql { address: @address }
+
+      it 'returns the correct validated address', ->
+        expect(@returns.get('address')).to.be @address
+
+      it 'returns the correct valid', ->
+        expect(@returns.valid).to.be false
+
+      it 'returns the correct errors', ->
+        expect(@returns.errors).to.eql {}
+
+      it 'returns the correct validity', ->
+        expect(@returns.isValid()).to.be true

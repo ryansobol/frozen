@@ -12,7 +12,7 @@ extend = (to, froms...) ->
   to
 
 class Model
-  constructor: (attributes, force = false) ->
+  constructor: (attributes, valid = true) ->
     attributes = extend({}, attributes)
     errors = {}
 
@@ -21,40 +21,41 @@ class Model
       continue unless value?
 
       if value instanceof association
-        continue if force is value.force
+        continue if valid is value.valid
         value = value.attributes
 
-      attributes[key] = new association(value, force)
+      attributes[key] = new association(value, valid)
 
-    for key, validation of @validations
-      value = attributes[key]
-      continue unless force or value?
+    if valid
+      for key, validation of @validations
+        value = attributes[key]
+        continue unless valid is 'force' or value?
 
-      for type, opts of validation
-        continue unless opts
+        for type, opts of validation
+          continue unless opts
 
-        validator = Validation[type]
-        continue unless validator?
+          validator = Validation[type]
+          continue unless validator?
 
-        error = validator(key, value, opts, @)
-        continue unless error?
+          error = validator(key, value, opts, @)
+          continue unless error?
 
-        errors[key] = error
-        break
+          errors[key] = error
+          break
 
     Object.defineProperty(@, 'attributes', value: Object.freeze(attributes))
     Object.defineProperty(@, 'errors', value: Object.freeze(errors))
-    Object.defineProperty(@, 'force', value: force)
+    Object.defineProperty(@, 'valid', value: valid)
 
   get: (key) ->
     @attributes[key]
 
-  set: (attributes, force = @force) ->
+  set: (attributes, valid = @valid) ->
     attributes = extend({}, @attributes, attributes)
-    new @constructor(attributes, force)
+    new @constructor(attributes, valid)
 
-  validate: ->
-    new @constructor(@attributes, true)
+  validate: (valid = 'force') ->
+    new @constructor(@attributes, valid)
 
   isValid: ->
     Object.keys(@errors).length is 0
