@@ -37,15 +37,15 @@ class Model
           validator = Validation[type]
           continue unless validator?
 
-          error = validator(key, value, opts, @)
+          error = validator(key, value, opts, this)
           continue unless error?
 
           errors[key] = error
           break
 
-    Object.defineProperty(@, 'attributes', value: Object.freeze(attributes))
-    Object.defineProperty(@, 'errors', value: Object.freeze(errors))
-    Object.defineProperty(@, 'options', value: options)
+    Object.defineProperty(this, 'attributes', value: Object.freeze(attributes))
+    Object.defineProperty(this, 'errors', value: Object.freeze(errors))
+    Object.defineProperty(this, 'options', value: options)
 
   get: (key) ->
     @attributes[key]
@@ -77,8 +77,8 @@ class Collection
     models = for model in models
       if model instanceof Model then model else new @model(model)
 
-    Object.defineProperty(@, 'models', value: Object.freeze(models))
-    Object.defineProperty(@, 'length', value: models.length)
+    Object.defineProperty(this, 'models', value: Object.freeze(models))
+    Object.defineProperty(this, 'length', value: models.length)
 
   at: (index) ->
     @models[index]

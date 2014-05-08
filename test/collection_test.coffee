@@ -46,7 +46,8 @@ describe 'Collection', ->
         @collection = new Collection([@object0, @object1])
 
       it 'has the correct models', ->
-        expect(@collection.models).to.eql [new Model(@object0), new Model(@object1)]
+        expected = [new Model(@object0), new Model(@object1)]
+        expect(@collection.models).to.eql expected
 
       it 'has the correct length', ->
         expect(@collection.length).to.eql 2
@@ -355,7 +356,7 @@ describe 'Collection', ->
       beforeEach ->
         @model0 = new Model(name: 'Betty')
         @model1 = new Model(name: 'Denise')
-        @collection = new Collection [@model0, @model1]
+        @collection = new Collection([@model0, @model1])
         @returns = @collection.remove(0)
 
       it 'returns a different object', ->
@@ -376,7 +377,9 @@ describe 'Collection', ->
         @collection = new Collection()
 
         @p = 'Miss'
-        @returns = @collection.map ((m, i) -> "#{@p} #{m.get('name')} #{i}"), @
+        @returns = @collection.map (m, i) ->
+          "#{@p} #{m.get('name')} #{i}"
+        , this
 
       it 'has the correct models', ->
         expect(@collection.models).to.eql []
@@ -397,7 +400,9 @@ describe 'Collection', ->
         @collection = new Collection([@model0, @model1])
 
         @p = 'Miss'
-        @returns = @collection.map ((m, i) -> "#{@p} #{m.get('name')} #{i}"), @
+        @returns = @collection.map (m, i) ->
+          "#{@p} #{m.get('name')} #{i}"
+        , this
 
       it 'has the correct models', ->
         expect(@collection.models).to.eql [@model0, @model1]

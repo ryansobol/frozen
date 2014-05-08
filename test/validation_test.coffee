@@ -39,7 +39,8 @@ describe 'Validation', ->
   describe 'association', ->
     describe 'given a valid value', ->
       beforeEach ->
-        @returns = Validation.association('address', new Address(zipcode: '90210'))
+        address = new Address(zipcode: '90210')
+        @returns = Validation.association('address', address)
 
       it 'returns the correct message', ->
         expect(@returns).to.eql undefined
