@@ -27,5 +27,5 @@ task 'test', 'Run the test suite', ->
 
 task 'lint', 'Lint the source files', ->
   build ->
-    args = ['src', 'test']
+    args = ['Cakefile', 'src', 'test']
     launch 'node_modules/.bin/coffeelint', args
