@@ -24,3 +24,8 @@ task 'test', 'Run the test suite', ->
   build ->
     args = ['--compilers', 'coffee:coffee-script/register', '-R', 'min']
     launch 'node_modules/.bin/mocha', args
+
+task 'lint', 'Lint the source files', ->
+  build ->
+    args = ['src']
+    launch 'node_modules/.bin/coffeelint', args
