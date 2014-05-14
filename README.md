@@ -55,6 +55,8 @@ I wrote Frozen for two reasons -- faster React performance and faster developmen
 
 [INSERT RATIONALE ON BACKBONE'S DATA MODELING]
 
+[INSERT RATIONALE ON GARY BERNHARDT'S IMMUTABLE CORE, IMPERATIVE SHELL]
+
 While it's probably not bug free, Frozen has a comprehensive test suite. I'm using Frozen in a production environment without any issues.
 
 Please be aware that Frozen is pre-1.0 software. This means function signatures or behavior may change. If a breaking change is necessary, I'll be sure to give a deprecation warning that includes a fix and when the feature will be removed.
@@ -500,3 +502,4 @@ Without these technologies, **Frozen** would not exist.
 
 - [React](http://facebook.github.io/react/)
 - [Backbone.js](http://backbonejs.org/)
+- [Gary Bernhardt](https://twitter.com/garybernhardt)
