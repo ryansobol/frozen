@@ -244,6 +244,7 @@ Given a key, returns the value of a model's attribute.
 model = new Frozen.Model({ name: 'Elsa' })
 model.get('name')
 #=> 'Anna'
+
 model.get('age')
 #=> undefined
 ```
@@ -258,8 +259,10 @@ Returns a new model by merging the given attributes into the model's attributes.
 model = new Frozen.Model({ name: 'Anna' })
 model.set({ role: 'queen' })
 #=> new Frozen.Model({ name: 'Anna', role: 'queen' })
+
 model.set({ name: 'Elsa' })
 #=> new Frozen.Model({ name: 'Elsa' })
+
 model.get('name')
 #=> 'Anna'
 ```
@@ -379,30 +382,37 @@ user.toJSON()
 
 ## Frozen.Collection
 
-Instances of **Frozen.Collection** represent a related group of entities in an application's state. They consist of an ordered and immutable series of **models**. They also have APIs for retrieving a single model, constructing new models, and converting models to JSON.
+Instances of **Frozen.Collection** represent a related group of entities of an application's state. They consist of an ordered and immutable series of **models** and a **length**. They also have APIs for retrieving a single model, constructing new models, and converting models to JSON.
 
-Custom collections extend **Frozen.Collection** with a custom model definition, domain-specific validation rules, associated model, computed properties, etc.
+Custom collections extend **Frozen.Collection** with a model property, iterator functions, computed properties, etc.
 
 ```coffee
-class Subject extends Frozen.Model
+class User extends Frozen.Model
 
-class Subjects extends Frozen.Collection
-  model: Subject
+class Users extends Frozen.Collection
+  model: User
 
-baker = new Subject({role: 'baker'})
-merchant = new Subject({role: 'merchant'})
+  findByName: (name) ->
+    return model for model in @models when model.get('name') is name
 
-subjects = new Subjects(baker, merchant)
-#=> new Subjects([ new Subject({role: 'baker'}), new Subject({role: 'merchant'}) ])
+  title: ->
+    ("Princes #{model.get('name')}" for model in @models)
 
-subjects.map()
-#=> false
+anna = new User({name: 'Anna'})
+elsa = new User({name: 'Elsa'})
 
-creature = new Spell({name: 'Snowman', spell: { power: 9000 }})
-#=> new Creature({name: 'Snowman', spell: new Spell({power: 9000})})
+users = new Users([anna, elsa])
+users.models
+#=> [ User({ name: 'Anna' }), User({ name: 'Elsa' }) ]
 
-creature.isValid()
-#=> true
+users.length
+#=> 2
+
+users.findByName('Elsa')
+#=> User({name: 'Elsa'})
+
+users.title()
+#=> ['Princess Anna', 'Princess Elsa']
 ```
 
 ### Collection.prototype.constructor
@@ -411,12 +421,74 @@ creature.isValid()
 
 Returns a new collection with the given array of models.
 
+```coffee
+anna = new Frozen.Model({ name: 'Anna' })
+elsa = new Frozen.Model({ name: 'Elsa' })
+
+collection = new Frozen.Collection([anna, elsa])
+collection.models
+#=> [ Frozen.Model({ name: 'Anna' }), Frozen.Model({ name: 'Elsa' }) ]
+
+collection.length
+#=> 2
+```
 
 If an array of attributes is given, new models are instantiated.
 
+```coffee
+anna = { name: 'Anna' }
+elsa = { name: 'Elsa' }
+
+collection = new Frozen.Collection([anna, elsa])
+collection.models
+#=> [ Frozen.Model({ name: 'Anna' }), Frozen.Model({ name: 'Elsa' }) ]
+
+collection.length
+#=> 2
+```
 
 To instantiate custom models, provide a `model` property.
 
+```coffee
+class User extends Frozen.Model
+
+class Users extends Frozen.Collection
+  model: User
+
+anna = { name: 'Anna' }
+elsa = { name: 'Elsa' }
+
+users = new Users([anna, elsa])
+users.models
+#=> [ User({ name: 'Anna' }), User({ name: 'Elsa' }) ]
+
+users.length
+#=> 2
+```
+
+Accepts a single model or attributes object.
+
+```coffee
+anna = new Frozen.Model({ name: 'Anna' })
+
+collection = new Frozen.Collection(anna)
+collection.models
+#=> [ Frozen.Model({ name: 'Anna' }) ]
+
+collection.length
+#=> 1
+```
+
+Also accepts no arguments at all.
+
+```coffee
+collection = new Frozen.Collection()
+collection.models
+#=> []
+
+collection.length
+#=> 0
+```
 
 ### Collection.prototype.at
 
@@ -424,6 +496,14 @@ To instantiate custom models, provide a `model` property.
 
 Returns the model at the given index positioned by insertion order.
 
+```coffee
+collection = new Frozen.Collection({ name: 'Anna' })
+collection.at(0)
+#=> Frozen.Model({ name: 'Anna' })
+
+collection.at(1)
+#=> undefined
+```
 
 ### Collection.prototype.insert
 
@@ -431,6 +511,17 @@ Returns the model at the given index positioned by insertion order.
 
 Returns a new collection with the given model inserted at the given index positioned by insertion order. Because collection models are immutable, the original collection is unchanged.
 
+```coffee
+collection = new Frozen.Collection({ name: 'Elsa' })
+collection.insert(0, { name: 'Anna' })
+#=> new Frozen.Collection([ Frozen.Model({ name: 'Anna'), Frozen.Model({ name: 'Elsa') ])
+
+collection.insert(1, { name: 'Anna' })
+#=> new Frozen.Collection([ Frozen.Model({ name: 'Elsa'), Frozen.Model({ name: 'Anna') ])
+
+collection.at(0)
+#=> Frozen.Model({ name: 'Elsa')
+```
 
 ### Collection.prototype.push
 
@@ -438,12 +529,47 @@ Returns a new collection with the given model inserted at the given index positi
 
 Returns a new collection with the given model appended to the end. Because collection models are immutable, the original collection is unchanged.
 
+```coffee
+collection = new Frozen.Collection({ name: 'Elsa' })
+
+model = new Frozen.Model({ name: 'Anna' })
+collection.push(model)
+#=> new Frozen.Collection([ Frozen.Model({ name: 'Elsa'), Frozen.Model({ name: 'Anna') ])
+
+collection.length
+#=> 1
+```
 
 If attributes are given, a new model is instantiated.
 
+```coffee
+collection = new Frozen.Collection({ name: 'Elsa' })
+
+model = { name: 'Anna' }
+collection.push(model)
+#=> new Frozen.Collection([ Frozen.Model({ name: 'Elsa'), Frozen.Model({ name: 'Anna') ])
+
+collection.length
+#=> 1
+```
 
 To instantiate a custom model, provide a `model` property.
 
+```coffee
+class User extends Frozen.Model
+
+class Users extends Frozen.Collection
+  model: User
+
+users = new Users({ name: 'Elsa' })
+
+user = { name: 'Anna' }
+users.push(user)
+#=> new Users([ User({ name: 'Elsa'), User({ name: 'Anna') ])
+
+users.length
+#=> 1
+```
 
 ### Collection.prototype.change
 
