@@ -122,7 +122,7 @@ entity.attributes
 
 #### Entity Validations
 
-Because entity attributes are immutable, validations are performed on construction.
+Because an entity's attributes are immutable, validations are performed on construction.
 
 ```coffee
 class User extends Frozen.Entity
@@ -257,7 +257,7 @@ entity.get('age')
 
 ##### `entity.set(attributes, options = @options)`
 
-Returns a new entity by merging the given attributes into the entity's attributes. Because entity attributes are immutable, the original entity is unchanged.
+Returns a new entity by merging the given attributes into the entity's attributes. Because an entity's attributes are immutable, the original entity is unchanged.
 
 ```coffee
 entity = new Frozen.Entity({ name: 'Anna' })
