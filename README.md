@@ -787,6 +787,11 @@ Returns an array of the collection's entities for JSON stringification by levera
 
 The name of this method is a bit confusing, as it doesn't actually return a JSON string. Unfortunately, that's the way the JavaScript API for [JSON.stringify](https://developer.mozilla.org/en-US/docs/JSON#toJSON()_method) works.
 
+```coffee
+collection = new Frozen.Collection([ { name: 'Anna' }, { name: 'Elsa' } ])
+collection.toJSON()
+#=> [ { name: 'Anna' }, { name: 'Elsa' } ]
+```
 
 ## Thank you
 
