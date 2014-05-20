@@ -648,7 +648,7 @@ users.entities
 
 ##### `collection.change(index, attributes)`
 
-Returns a new collection by merging the given attributes into the collection's entity at the given index. Because a collection's entities are immutable, the original collection is unchanged.
+Returns a new collection by merging the given attributes into the collection's entity at the given index positioned by insertion order. Because a collection's entities are immutable, the original collection is unchanged.
 
 ```coffee
 collection = new Frozen.Collection({ name: 'Elsa' })
@@ -671,7 +671,7 @@ collection.entities
 
 ##### `collection.remove(index)`
 
-Returns a new collection without the entity at the given index. Because a collection's entities are immutable, the original collection is unchanged.
+Returns a new collection without the entity at the given index positioned by insertion order. Because a collection's entities are immutable, the original collection is unchanged.
 
 ```coffee
 collection = new Frozen.Collection({ name: 'Elsa' })
