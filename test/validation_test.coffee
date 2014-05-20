@@ -1,7 +1,7 @@
 expect = require 'expect.js'
-{Model, Validation} = require '../src/frozen'
+{Entity, Validation} = require '../src/frozen'
 
-class Address extends Model
+class Address extends Entity
   validations:
     zipcode:
       required: true

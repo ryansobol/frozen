@@ -1,9 +1,9 @@
 # See https://github.com/thedersen/backbone.validation for an example API
 class Validation
-  @required: (key, value, opts, model) ->
+  @required: (key, value, opts, entity) ->
     opts.message ? 'Required' if not value? or value.trim() is ''
 
-  @association: (key, value, opts, model) ->
+  @association: (key, value, opts, entity) ->
     value.errors if value? and not value.isValid()
 
 extend = (to, froms...) ->
@@ -11,7 +11,7 @@ extend = (to, froms...) ->
     to[prop] = value for prop, value of from when from.hasOwnProperty(prop)
   to
 
-class Model
+class Entity
   constructor: (attributes, options = { validate: true }) ->
     attributes = extend({}, attributes)
     errors = {}
@@ -69,54 +69,54 @@ class Model
     attributes
 
 class Collection
-  model: Model
+  entity: Entity
 
-  constructor: (models = []) ->
-    models = [models] unless models instanceof Array
+  constructor: (entities = []) ->
+    entities = [entities] unless entities instanceof Array
 
-    models = for model in models
-      if model instanceof Model then model else new @model(model)
+    entities = for entity in entities
+      if entity instanceof Entity then entity else new @entity(entity)
 
-    Object.defineProperty(this, 'models', value: Object.freeze(models))
-    Object.defineProperty(this, 'length', value: models.length)
+    Object.defineProperty(this, 'entities', value: Object.freeze(entities))
+    Object.defineProperty(this, 'length', value: entities.length)
 
   at: (index) ->
-    @models[index]
+    @entities[index]
 
-  insert: (index, model = {}) ->
-    model = new @model(model) unless model instanceof Model
-    models = @models[...index]
-    models.push(model)
-    models = models.concat(@models[index..])
-    new @constructor(models)
+  insert: (index, entity = {}) ->
+    entity = new @entity(entity) unless entity instanceof Entity
+    entities = @entities[...index]
+    entities.push(entity)
+    entities = entities.concat(@entities[index..])
+    new @constructor(entities)
 
-  push: (model = {}) ->
-    @insert(@length, model)
+  push: (entity = {}) ->
+    @insert(@length, entity)
 
   change: (index, attributes) ->
-    models = for model, idx in @models
-      if index is idx then model.set(attributes) else model
-    new @constructor(models)
+    entities = for entity, idx in @entities
+      if index is idx then entity.set(attributes) else entity
+    new @constructor(entities)
 
   remove: (index) ->
-    models = (model for model, idx in @models when index isnt idx)
-    new @constructor(models)
+    entities = (entity for entity, idx in @entities when index isnt idx)
+    new @constructor(entities)
 
   validate: ->
-    models = (model.validate() for model in @models)
-    new @constructor(models)
+    entities = (entity.validate() for entity in @entities)
+    new @constructor(entities)
 
   isValid: ->
-    @models.reduce ((a, e) -> a and e.isValid()), true
+    @entities.reduce ((a, e) -> a and e.isValid()), true
 
   map: (callback, thisArg) ->
-    @models.map(callback, thisArg)
+    @entities.map(callback, thisArg)
 
   toJSON: ->
-    model.toJSON() for model in @models
+    entity.toJSON() for entity in @entities
 
 Frozen =
-  Model: Model
+  Entity: Entity
   Collection: Collection
   Validation: Validation
 

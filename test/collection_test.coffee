@@ -1,13 +1,13 @@
 expect = require 'expect.js'
-{Collection, Model} = require '../src/frozen'
+{Collection, Entity} = require '../src/frozen'
 
-class Person extends Model
+class Person extends Entity
   validations:
     name:
       required: true
 
 class PersonCollection extends Collection
-  model: Person
+  entity: Person
 
 describe 'Collection', ->
   describe 'constructor', ->
@@ -15,13 +15,13 @@ describe 'Collection', ->
       beforeEach ->
         @collection = new Collection()
 
-      it 'has the correct models', ->
-        expect(@collection.models).to.eql []
+      it 'has the correct entities', ->
+        expect(@collection.entities).to.eql []
 
       it 'has the correct length', ->
         expect(@collection.length).to.eql 0
 
-      it 'has the correct models at', ->
+      it 'has the correct entities at', ->
         expect(@collection.at(0)).to.eql undefined
 
     describe 'given an object', ->
@@ -29,14 +29,14 @@ describe 'Collection', ->
         @object = { name: 'Jim' }
         @collection = new Collection(@object)
 
-      it 'has the correct models', ->
-        expect(@collection.models).to.eql [new Model(@object)]
+      it 'has the correct entities', ->
+        expect(@collection.entities).to.eql [new Entity(@object)]
 
       it 'has the correct length', ->
         expect(@collection.length).to.eql 1
 
-      it 'has the correct models at', ->
-        expect(@collection.at(0)).to.eql new Model(@object)
+      it 'has the correct entities at', ->
+        expect(@collection.at(0)).to.eql new Entity(@object)
         expect(@collection.at(1)).to.eql undefined
 
     describe 'given two objects', ->
@@ -45,48 +45,48 @@ describe 'Collection', ->
         @object1 = { name: 'Ted' }
         @collection = new Collection([@object0, @object1])
 
-      it 'has the correct models', ->
-        expected = [new Model(@object0), new Model(@object1)]
-        expect(@collection.models).to.eql expected
+      it 'has the correct entities', ->
+        expected = [new Entity(@object0), new Entity(@object1)]
+        expect(@collection.entities).to.eql expected
 
       it 'has the correct length', ->
         expect(@collection.length).to.eql 2
 
-      it 'has the correct models at', ->
-        expect(@collection.at(0)).to.eql new Model(@object0)
-        expect(@collection.at(1)).to.eql new Model(@object1)
+      it 'has the correct entities at', ->
+        expect(@collection.at(0)).to.eql new Entity(@object0)
+        expect(@collection.at(1)).to.eql new Entity(@object1)
         expect(@collection.at(2)).to.eql undefined
 
-    describe 'given a model', ->
+    describe 'given a entity', ->
       beforeEach ->
-        @model = new Model(name: 'Jim')
-        @collection = new Collection(@model)
+        @entity = new Entity(name: 'Jim')
+        @collection = new Collection(@entity)
 
-      it 'has the correct models', ->
-        expect(@collection.models).to.eql [@model]
+      it 'has the correct entities', ->
+        expect(@collection.entities).to.eql [@entity]
 
       it 'has the correct length', ->
         expect(@collection.length).to.eql 1
 
-      it 'has the correct models at', ->
-        expect(@collection.at(0)).to.eql @model
+      it 'has the correct entities at', ->
+        expect(@collection.at(0)).to.eql @entity
         expect(@collection.at(1)).to.eql undefined
 
-    describe 'given two models', ->
+    describe 'given two entities', ->
       beforeEach ->
-        @model0 = new Model(name: 'Jim')
-        @model1 = new Model(name: 'Ted')
-        @collection = new Collection([@model0, @model1])
+        @entity0 = new Entity(name: 'Jim')
+        @entity1 = new Entity(name: 'Ted')
+        @collection = new Collection([@entity0, @entity1])
 
-      it 'has the correct models', ->
-        expect(@collection.models).to.eql [@model0, @model1]
+      it 'has the correct entities', ->
+        expect(@collection.entities).to.eql [@entity0, @entity1]
 
       it 'has the correct length', ->
         expect(@collection.length).to.eql 2
 
-      it 'has the correct models at', ->
-        expect(@collection.at(0)).to.eql @model0
-        expect(@collection.at(1)).to.eql @model1
+      it 'has the correct entities at', ->
+        expect(@collection.at(0)).to.eql @entity0
+        expect(@collection.at(1)).to.eql @entity1
         expect(@collection.at(2)).to.eql undefined
 
   describe 'insert', ->
@@ -96,26 +96,26 @@ describe 'Collection', ->
 
       describe 'given no object', ->
         beforeEach ->
-          @initial = new Model(name: 'Bob')
+          @initial = new Entity(name: 'Bob')
           @collection = new Collection(@initial)
           @returns = @collection.insert(@index)
 
         it 'returns a different object', ->
           expect(@returns).not.to.be @collection
 
-        it 'returns the correct models', ->
-          expect(@returns.models).to.eql [new Model(), @initial]
+        it 'returns the correct entities', ->
+          expect(@returns.entities).to.eql [new Entity(), @initial]
 
         it 'returns the correct length', ->
           expect(@returns.length).to.eql 2
 
-        it 'returns the correct models at', ->
-          expect(@returns.at(0)).to.eql new Model()
+        it 'returns the correct entities at', ->
+          expect(@returns.at(0)).to.eql new Entity()
           expect(@returns.at(1)).to.eql @initial
 
       describe 'given an object', ->
         beforeEach ->
-          @initial = new Model(name: 'Bob')
+          @initial = new Entity(name: 'Bob')
           @collection = new Collection(@initial)
           @object = { name: 'Tom' }
           @returns = @collection.insert(@index, @object)
@@ -123,34 +123,34 @@ describe 'Collection', ->
         it 'returns a different object', ->
           expect(@returns).not.to.be @collection
 
-        it 'returns the correct models', ->
-          expect(@returns.models).to.eql [new Model(@object), @initial]
+        it 'returns the correct entities', ->
+          expect(@returns.entities).to.eql [new Entity(@object), @initial]
 
         it 'returns the correct length', ->
           expect(@returns.length).to.eql 2
 
-        it 'returns the correct models at', ->
-          expect(@returns.at(0)).to.eql new Model(@object)
+        it 'returns the correct entities at', ->
+          expect(@returns.at(0)).to.eql new Entity(@object)
           expect(@returns.at(1)).to.eql @initial
 
-      describe 'given a model', ->
+      describe 'given a entity', ->
         beforeEach ->
-          @initial = new Model(name: 'Bob')
+          @initial = new Entity(name: 'Bob')
           @collection = new Collection(@initial)
-          @model = new Model(name: 'Tom')
-          @returns = @collection.insert(@index, @model)
+          @entity = new Entity(name: 'Tom')
+          @returns = @collection.insert(@index, @entity)
 
         it 'returns a different object', ->
           expect(@returns).not.to.be @collection
 
-        it 'returns the correct models', ->
-          expect(@returns.models).to.eql [@model, @initial]
+        it 'returns the correct entities', ->
+          expect(@returns.entities).to.eql [@entity, @initial]
 
         it 'returns the correct length', ->
           expect(@returns.length).to.eql 2
 
-        it 'returns the correct models at', ->
-          expect(@returns.at(0)).to.eql @model
+        it 'returns the correct entities at', ->
+          expect(@returns.at(0)).to.eql @entity
           expect(@returns.at(1)).to.eql @initial
 
     describe 'given an index of 1', ->
@@ -159,26 +159,26 @@ describe 'Collection', ->
 
       describe 'given no object', ->
         beforeEach ->
-          @initial = new Model(name: 'Bob')
+          @initial = new Entity(name: 'Bob')
           @collection = new Collection(@initial)
           @returns = @collection.insert(@index)
 
         it 'returns a different object', ->
           expect(@returns).not.to.be @collection
 
-        it 'returns the correct models', ->
-          expect(@returns.models).to.eql [@initial, new Model()]
+        it 'returns the correct entities', ->
+          expect(@returns.entities).to.eql [@initial, new Entity()]
 
         it 'returns the correct length', ->
           expect(@returns.length).to.eql 2
 
-        it 'returns the correct models at', ->
+        it 'returns the correct entities at', ->
           expect(@returns.at(0)).to.eql @initial
-          expect(@returns.at(1)).to.eql new Model()
+          expect(@returns.at(1)).to.eql new Entity()
 
       describe 'given an object', ->
         beforeEach ->
-          @initial = new Model(name: 'Bob')
+          @initial = new Entity(name: 'Bob')
           @collection = new Collection(@initial)
           @object = { name: 'Tom' }
           @returns = @collection.insert(@index, @object)
@@ -186,59 +186,59 @@ describe 'Collection', ->
         it 'returns a different object', ->
           expect(@returns).not.to.be @collection
 
-        it 'returns the correct models', ->
-          expect(@returns.models).to.eql [@initial, new Model(@object)]
+        it 'returns the correct entities', ->
+          expect(@returns.entities).to.eql [@initial, new Entity(@object)]
 
         it 'returns the correct length', ->
           expect(@returns.length).to.eql 2
 
-        it 'returns the correct models at', ->
+        it 'returns the correct entities at', ->
           expect(@returns.at(0)).to.eql @initial
-          expect(@returns.at(1)).to.eql new Model(@object)
+          expect(@returns.at(1)).to.eql new Entity(@object)
 
-      describe 'given a model', ->
+      describe 'given a entity', ->
         beforeEach ->
-          @initial = new Model(name: 'Bob')
+          @initial = new Entity(name: 'Bob')
           @collection = new Collection(@initial)
-          @model = new Model(name: 'Tom')
-          @returns = @collection.insert(@index, @model)
+          @entity = new Entity(name: 'Tom')
+          @returns = @collection.insert(@index, @entity)
 
         it 'returns a different object', ->
           expect(@returns).not.to.be @collection
 
-        it 'returns the correct models', ->
-          expect(@returns.models).to.eql [@initial, @model]
+        it 'returns the correct entities', ->
+          expect(@returns.entities).to.eql [@initial, @entity]
 
         it 'returns the correct length', ->
           expect(@returns.length).to.eql 2
 
-        it 'returns the correct models at', ->
+        it 'returns the correct entities at', ->
           expect(@returns.at(0)).to.eql @initial
-          expect(@returns.at(1)).to.eql @model
+          expect(@returns.at(1)).to.eql @entity
 
   describe 'push', ->
     describe 'given no object', ->
       beforeEach ->
-        @initial = new Model(name: 'Bob')
+        @initial = new Entity(name: 'Bob')
         @collection = new Collection(@initial)
         @returns = @collection.push()
 
       it 'returns a different object', ->
         expect(@returns).not.to.be @collection
 
-      it 'returns the correct models', ->
-        expect(@returns.models).to.eql [@initial, new Model()]
+      it 'returns the correct entities', ->
+        expect(@returns.entities).to.eql [@initial, new Entity()]
 
       it 'returns the correct length', ->
         expect(@returns.length).to.eql 2
 
-      it 'returns the correct models at', ->
+      it 'returns the correct entities at', ->
         expect(@returns.at(0)).to.eql @initial
-        expect(@returns.at(1)).to.eql new Model()
+        expect(@returns.at(1)).to.eql new Entity()
 
     describe 'given an object', ->
       beforeEach ->
-        @initial = new Model(name: 'Bob')
+        @initial = new Entity(name: 'Bob')
         @collection = new Collection(@initial)
         @object = { name: 'Tom' }
         @returns = @collection.push(@object)
@@ -246,133 +246,133 @@ describe 'Collection', ->
       it 'returns a different object', ->
         expect(@returns).not.to.be @collection
 
-      it 'returns the correct models', ->
-        expect(@returns.models).to.eql [@initial, new Model(@object)]
+      it 'returns the correct entities', ->
+        expect(@returns.entities).to.eql [@initial, new Entity(@object)]
 
       it 'returns the correct length', ->
         expect(@returns.length).to.eql 2
 
-      it 'returns the correct models at', ->
+      it 'returns the correct entities at', ->
         expect(@returns.at(0)).to.eql @initial
-        expect(@returns.at(1)).to.eql new Model(@object)
+        expect(@returns.at(1)).to.eql new Entity(@object)
 
-    describe 'given a model', ->
+    describe 'given a entity', ->
       beforeEach ->
-        @initial = new Model(name: 'Bob')
+        @initial = new Entity(name: 'Bob')
         @collection = new Collection(@initial)
-        @model = new Model(name: 'Tom')
-        @returns = @collection.push(@model)
+        @entity = new Entity(name: 'Tom')
+        @returns = @collection.push(@entity)
 
       it 'returns a different object', ->
         expect(@returns).not.to.be @collection
 
-      it 'returns the correct models', ->
-        expect(@returns.models).to.eql [@initial, @model]
+      it 'returns the correct entities', ->
+        expect(@returns.entities).to.eql [@initial, @entity]
 
       it 'returns the correct length', ->
         expect(@returns.length).to.eql 2
 
-      it 'returns the correct models at', ->
+      it 'returns the correct entities at', ->
         expect(@returns.at(0)).to.eql @initial
-        expect(@returns.at(1)).to.eql @model
+        expect(@returns.at(1)).to.eql @entity
 
   describe 'change', ->
-    describe 'given a model at and no attributes', ->
+    describe 'given a entity at and no attributes', ->
       beforeEach ->
-        @initial = new Model(name: 'Kat')
+        @initial = new Entity(name: 'Kat')
         @collection = new Collection(@initial)
         @returns = @collection.change(0, null)
 
       it 'returns a different object', ->
         expect(@returns).not.to.be @collection
 
-      it 'returns the correct models', ->
-        expect(@returns.models).to.eql [@initial]
+      it 'returns the correct entities', ->
+        expect(@returns.entities).to.eql [@initial]
 
       it 'returns the correct length', ->
         expect(@returns.length).to.eql 1
 
-      it 'returns the correct model at', ->
+      it 'returns the correct entity at', ->
         expect(@returns.at(0)).to.eql @initial
 
-    describe 'given no model at and attributes', ->
+    describe 'given no entity at and attributes', ->
       beforeEach ->
-        @initial = new Model(name: 'Kat')
+        @initial = new Entity(name: 'Kat')
         @collection = new Collection(@initial)
         @returns = @collection.change(null, name: 'Julia')
 
       it 'returns a different object', ->
         expect(@returns).not.to.be @collection
 
-      it 'returns the correct models', ->
-        expect(@returns.models).to.eql [@initial]
+      it 'returns the correct entities', ->
+        expect(@returns.entities).to.eql [@initial]
 
       it 'returns the correct length', ->
         expect(@returns.length).to.eql 1
 
-      it 'returns the correct model at', ->
+      it 'returns the correct entity at', ->
         expect(@returns.at(0)).to.eql @initial
 
-    describe 'given a model at and attributes', ->
+    describe 'given a entity at and attributes', ->
       beforeEach ->
-        @initial = new Model(name: 'Kat')
+        @initial = new Entity(name: 'Kat')
         @collection = new Collection(@initial)
         @returns = @collection.change(0, name: 'Julia')
 
       it 'returns a different object', ->
         expect(@returns).not.to.be @collection
 
-      it 'returns the correct models', ->
-        expect(@returns.models).to.eql [new Model(name: 'Julia')]
+      it 'returns the correct entities', ->
+        expect(@returns.entities).to.eql [new Entity(name: 'Julia')]
 
       it 'returns the correct length', ->
         expect(@returns.length).to.eql 1
 
-      it 'returns the correct model at', ->
-        expect(@returns.at(0)).to.eql new Model(name: 'Julia')
+      it 'returns the correct entity at', ->
+        expect(@returns.at(0)).to.eql new Entity(name: 'Julia')
 
   describe 'remove', ->
-    describe 'given no model at', ->
+    describe 'given no entity at', ->
       beforeEach ->
-        @model0 = new Model(name: 'Betty')
-        @model1 = new Model(name: 'Denise')
-        @collection = new Collection([@model0, @model1])
+        @entity0 = new Entity(name: 'Betty')
+        @entity1 = new Entity(name: 'Denise')
+        @collection = new Collection([@entity0, @entity1])
         @returns = @collection.remove()
 
       it 'returns a different object', ->
         expect(@returns).not.to.be @collection
 
-      it 'returns the correct models', ->
-        expect(@returns.models).to.eql [@model0, @model1]
+      it 'returns the correct entities', ->
+        expect(@returns.entities).to.eql [@entity0, @entity1]
 
       it 'returns the correct length', ->
         expect(@returns.length).to.eql 2
 
-      it 'returns the correct models at', ->
-        expect(@returns.at(0)).to.eql @model0
-        expect(@returns.at(1)).to.eql @model1
+      it 'returns the correct entities at', ->
+        expect(@returns.at(0)).to.eql @entity0
+        expect(@returns.at(1)).to.eql @entity1
 
-    describe 'given a model at', ->
+    describe 'given a entity at', ->
       beforeEach ->
-        @model0 = new Model(name: 'Betty')
-        @model1 = new Model(name: 'Denise')
-        @collection = new Collection([@model0, @model1])
+        @entity0 = new Entity(name: 'Betty')
+        @entity1 = new Entity(name: 'Denise')
+        @collection = new Collection([@entity0, @entity1])
         @returns = @collection.remove(0)
 
       it 'returns a different object', ->
         expect(@returns).not.to.be @collection
 
-      it 'returns the correct models', ->
-        expect(@returns.models).to.eql [@model1]
+      it 'returns the correct entities', ->
+        expect(@returns.entities).to.eql [@entity1]
 
       it 'returns the correct length', ->
         expect(@returns.length).to.eql 1
 
-      it 'returns the correct models at', ->
-        expect(@returns.at(0)).to.eql @model1
+      it 'returns the correct entities at', ->
+        expect(@returns.at(0)).to.eql @entity1
 
   describe 'map', ->
-    describe 'given no models', ->
+    describe 'given no entities', ->
       beforeEach ->
         @collection = new Collection()
 
@@ -381,8 +381,8 @@ describe 'Collection', ->
           "#{@p} #{m.get('name')} #{i}"
         , this
 
-      it 'has the correct models', ->
-        expect(@collection.models).to.eql []
+      it 'has the correct entities', ->
+        expect(@collection.entities).to.eql []
 
       it 'has the correct length', ->
         expect(@collection.length).to.eql 0
@@ -393,19 +393,19 @@ describe 'Collection', ->
       it 'returns the correct data', ->
         expect(@returns).to.eql []
 
-    describe 'given two models', ->
+    describe 'given two entities', ->
       beforeEach ->
-        @model0 = new Model(name: 'Tracy')
-        @model1 = new Model(name: 'Janne')
-        @collection = new Collection([@model0, @model1])
+        @entity0 = new Entity(name: 'Tracy')
+        @entity1 = new Entity(name: 'Janne')
+        @collection = new Collection([@entity0, @entity1])
 
         @p = 'Miss'
         @returns = @collection.map (m, i) ->
           "#{@p} #{m.get('name')} #{i}"
         , this
 
-      it 'has the correct models', ->
-        expect(@collection.models).to.eql [@model0, @model1]
+      it 'has the correct entities', ->
+        expect(@collection.entities).to.eql [@entity0, @entity1]
 
       it 'has the correct length', ->
         expect(@collection.length).to.eql 2
@@ -417,13 +417,13 @@ describe 'Collection', ->
         expect(@returns).to.eql ['Miss Tracy 0', 'Miss Janne 1']
 
   describe 'toJSON', ->
-    describe 'given no models', ->
+    describe 'given no entities', ->
       beforeEach ->
         @collection = new Collection()
         @returns = @collection.toJSON()
 
-      it 'has the correct models', ->
-        expect(@collection.models).to.eql []
+      it 'has the correct entities', ->
+        expect(@collection.entities).to.eql []
 
       it 'has the correct length', ->
         expect(@collection.length).to.eql 0
@@ -434,15 +434,15 @@ describe 'Collection', ->
       it 'returns the correct data', ->
         expect(@returns).to.eql []
 
-    describe 'given two models', ->
+    describe 'given two entities', ->
       beforeEach ->
-        @model0 = new Model(name: 'Nia')
-        @model1 = new Model(name: 'Tia')
-        @collection = new Collection([@model0, @model1])
+        @entity0 = new Entity(name: 'Nia')
+        @entity1 = new Entity(name: 'Tia')
+        @collection = new Collection([@entity0, @entity1])
         @returns = @collection.toJSON()
 
-      it 'has the correct models', ->
-        expect(@collection.models).to.eql [@model0, @model1]
+      it 'has the correct entities', ->
+        expect(@collection.entities).to.eql [@entity0, @entity1]
 
       it 'has the correct length', ->
         expect(@collection.length).to.eql 2
@@ -451,17 +451,17 @@ describe 'Collection', ->
         expect(@returns instanceof Array).to.be true
 
       it 'returns the correct data', ->
-        expect(@returns).to.eql [@model0.toJSON(), @model1.toJSON()]
+        expect(@returns).to.eql [@entity0.toJSON(), @entity1.toJSON()]
 
   describe 'validate', ->
-    describe 'given an invalid model', ->
+    describe 'given an invalid entity', ->
       beforeEach ->
-        @model = new Person(name: '')
-        @collection = new PersonCollection(@model)
+        @entity = new Person(name: '')
+        @collection = new PersonCollection(@entity)
         @returns = @collection.validate()
 
-      it 'has the correct models', ->
-        expect(@collection.models).to.eql [@model]
+      it 'has the correct entities', ->
+        expect(@collection.entities).to.eql [@entity]
 
       it 'has the correct length', ->
         expect(@collection.length).to.eql 1
@@ -472,8 +472,8 @@ describe 'Collection', ->
       it 'returns a different object', ->
         expect(@returns).not.to.be @collection
 
-      it 'returns the correct models', ->
-        expect(@returns.models).to.eql [@model.validate()]
+      it 'returns the correct entities', ->
+        expect(@returns.entities).to.eql [@entity.validate()]
 
       it 'returns the correct length', ->
         expect(@returns.length).to.eql 1
@@ -481,14 +481,14 @@ describe 'Collection', ->
       it 'returns the correct validity', ->
         expect(@returns.isValid()).to.be false
 
-    describe 'given a valid model', ->
+    describe 'given a valid entity', ->
       beforeEach ->
-        @model = new Person(name: 'Frank')
-        @collection = new PersonCollection(@model)
+        @entity = new Person(name: 'Frank')
+        @collection = new PersonCollection(@entity)
         @returns = @collection.validate()
 
-      it 'has the correct models', ->
-        expect(@collection.models).to.eql [@model]
+      it 'has the correct entities', ->
+        expect(@collection.entities).to.eql [@entity]
 
       it 'has the correct length', ->
         expect(@collection.length).to.eql 1
@@ -499,8 +499,8 @@ describe 'Collection', ->
       it 'returns a different object', ->
         expect(@returns).not.to.be @collection
 
-      it 'returns the correct models', ->
-        expect(@returns.models).to.eql [@model.validate()]
+      it 'returns the correct entities', ->
+        expect(@returns.entities).to.eql [@entity.validate()]
 
       it 'returns the correct length', ->
         expect(@returns.length).to.eql 1
@@ -508,14 +508,14 @@ describe 'Collection', ->
       it 'returns the correct validity', ->
         expect(@returns.isValid()).to.be true
 
-    describe 'given an incomplete model', ->
+    describe 'given an incomplete entity', ->
       beforeEach ->
-        @model = new Person()
-        @collection = new PersonCollection(@model)
+        @entity = new Person()
+        @collection = new PersonCollection(@entity)
         @returns = @collection.validate()
 
-      it 'has the correct models', ->
-        expect(@collection.models).to.eql [@model]
+      it 'has the correct entities', ->
+        expect(@collection.entities).to.eql [@entity]
 
       it 'has the correct length', ->
         expect(@collection.length).to.eql 1
@@ -526,8 +526,8 @@ describe 'Collection', ->
       it 'returns a different object', ->
         expect(@returns).not.to.be @collection
 
-      it 'returns the correct models', ->
-        expect(@returns.models).to.eql [@model.validate()]
+      it 'returns the correct entities', ->
+        expect(@returns.entities).to.eql [@entity.validate()]
 
       it 'returns the correct length', ->
         expect(@returns.length).to.eql 1
@@ -535,15 +535,15 @@ describe 'Collection', ->
       it 'returns the correct validity', ->
         expect(@returns.isValid()).to.be false
 
-    describe 'given both invalid and valid models', ->
+    describe 'given both invalid and valid entities', ->
       beforeEach ->
-        @model0 = new Person(name: '')
-        @model1 = new Person(name: 'Frank')
-        @collection = new PersonCollection([@model0, @model1])
+        @entity0 = new Person(name: '')
+        @entity1 = new Person(name: 'Frank')
+        @collection = new PersonCollection([@entity0, @entity1])
         @returns = @collection.validate()
 
-      it 'has the correct models', ->
-        expect(@collection.models).to.eql [@model0, @model1]
+      it 'has the correct entities', ->
+        expect(@collection.entities).to.eql [@entity0, @entity1]
 
       it 'has the correct length', ->
         expect(@collection.length).to.eql 2
@@ -554,8 +554,9 @@ describe 'Collection', ->
       it 'returns a different object', ->
         expect(@returns).not.to.be @collection
 
-      it 'returns the correct models', ->
-        expect(@returns.models).to.eql [@model0.validate(), @model1.validate()]
+      it 'returns the correct entities', ->
+        expected = [@entity0.validate(), @entity1.validate()]
+        expect(@returns.entities).to.eql expected
 
       it 'returns the correct length', ->
         expect(@returns.length).to.eql 2
@@ -563,15 +564,15 @@ describe 'Collection', ->
       it 'returns the correct validity', ->
         expect(@returns.isValid()).to.be false
 
-    describe 'given both incomplete and valid models', ->
+    describe 'given both incomplete and valid entities', ->
       beforeEach ->
-        @model0 = new Person()
-        @model1 = new Person(name: 'Frank')
-        @collection = new PersonCollection([@model0, @model1])
+        @entity0 = new Person()
+        @entity1 = new Person(name: 'Frank')
+        @collection = new PersonCollection([@entity0, @entity1])
         @returns = @collection.validate()
 
-      it 'has the correct models', ->
-        expect(@collection.models).to.eql [@model0, @model1]
+      it 'has the correct entities', ->
+        expect(@collection.entities).to.eql [@entity0, @entity1]
 
       it 'has the correct length', ->
         expect(@collection.length).to.eql 2
@@ -582,8 +583,9 @@ describe 'Collection', ->
       it 'returns a different object', ->
         expect(@returns).not.to.be @collection
 
-      it 'returns the correct models', ->
-        expect(@returns.models).to.eql [@model0.validate(), @model1.validate()]
+      it 'returns the correct entities', ->
+        expected = [@entity0.validate(), @entity1.validate()]
+        expect(@returns.entities).to.eql expected
 
       it 'returns the correct length', ->
         expect(@returns.length).to.eql 2

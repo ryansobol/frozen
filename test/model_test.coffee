@@ -1,12 +1,12 @@
 expect = require 'expect.js'
-{Model} = require '../src/frozen'
+{Entity} = require '../src/frozen'
 
-class Address extends Model
+class Address extends Entity
   validations:
     zipcode:
       required: true
 
-class Person extends Model
+class Person extends Entity
   associations:
     address: Address
 
@@ -19,7 +19,7 @@ class Person extends Model
     address:
       association: true
 
-describe 'Model', ->
+describe 'Entity', ->
   describe 'constructor', ->
     describe 'given no attributes', ->
       beforeEach ->

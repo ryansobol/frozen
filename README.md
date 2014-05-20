@@ -1,6 +1,6 @@
 ## Frozen v0.1.0 (Not yet released)
 
-**Frozen** provides immutable models and collections for Node and browser apps.
+**Frozen** provides immutable entities and collections for Node and browser apps.
 
 - The README
 - The wiki
@@ -15,15 +15,15 @@ The MIT license - Copyright (c) 2014 [Kurbo Health](http://kurbo.com/) - Author 
 ## Example
 
 ```coffee
-princess = new Frozen.Model({ name: 'Anna' })
+princess = new Frozen.Entity({ name: 'Anna' })
 princess.get('name')  
 #=> 'Anna'
 
 princess.set({ trait: 'adorkable' })
-#=> new Frozen.Model({ name: 'Anna', trait: 'adorkable' })
+#=> new Frozen.Entity({ name: 'Anna', trait: 'adorkable' })
 
 princess.set({ name: 'Elsa' })
-#=> new Frozen.Model({ name: 'Elsa' })
+#=> new Frozen.Entity({ name: 'Elsa' })
 
 princess.get('name')
 #=> 'Anna'
@@ -32,7 +32,7 @@ princess.get('name')
 ```coffee
 royals = new Frozen.Collection({ name: 'Elsa' })
 royals.at(0)
-#=> Frozen.Model({ name: 'Elsa' })
+#=> Frozen.Entity({ name: 'Elsa' })
 
 royals.push({name: 'Anna'})
 #=> new Frozen.Collection([{ name: 'Elsa' }, { name: 'Anna' }])
@@ -44,7 +44,7 @@ royals.remove(0)
 #=> new Frozen.Collection()
 
 royals.at(0)
-#=> Frozen.Model({ name: 'Elsa' })
+#=> Frozen.Entity({ name: 'Elsa' })
 ```
 
 ## Introduction
@@ -69,16 +69,16 @@ There are a bunch of Backbone features that I'd like to see ported over. If you
 In your pull request, please make a strong case as to why the changes are necessary.  Providing example code and tests significantly increases the chances your pull request is accepted.
 
 
-## Frozen.Model
+## Frozen.Entity
 
-Instances of **Frozen.Model** represent a single entity in an application's state. They consist of immutable key-value **attributes** and validation **errors**. They also have APIs for retrieving a single attribute, constructing new models, and converting attributes to JSON.
+Instances of **Frozen.Entity** represent a single entity in an application's state. They consist of immutable key-value **attributes** and validation **errors**. They also have APIs for retrieving a single attribute, constructing new entities, and converting attributes to JSON.
 
-Custom models extend **Frozen.Model** with domain-specific validation rules, associated attributes, computed properties, etc.
+Custom entities extend **Frozen.Entity** with domain-specific validation rules, associated attributes, computed properties, etc.
 
 ```coffee
-class Profile extends Frozen.Model
+class Profile extends Frozen.Entity
 
-class User extends Frozen.Model
+class User extends Frozen.Entity
   associations:
     profile: Profile
 
@@ -104,24 +104,24 @@ user.errors
 #=> { name: 'Required' }
 ```
 
-### Model.prototype.constructor
+### Entity.prototype.constructor
 
-##### `new Frozen.Model(attributes, options = { validate: true })`
+##### `new Frozen.Entity(attributes, options = { validate: true })`
 
-Returns a new model with the given key-value attributes.
+Returns a new entity with the given key-value attributes.
 
 ```coffee
-model = new Frozen.Model({ name: 'Elsa', role: 'queen' })
-model.attributes
+entity = new Frozen.Entity({ name: 'Elsa', role: 'queen' })
+entity.attributes
 #=> { name: 'Elsa', role: 'queen' }
 ```
 
-#### Model Validations
+#### Entity Validations
 
-Because model attributes are immutable, validations are performed on construction.
+Because entity attributes are immutable, validations are performed on construction.
 
 ```coffee
-class User extends Frozen.Model
+class User extends Frozen.Entity
   validations:
     name:
       required: true
@@ -142,7 +142,7 @@ user.errors
 Optionally, validations can be disabled on construction.
 
 ```coffee
-class User extends Frozen.Model
+class User extends Frozen.Entity
   validations:
     name:
       required: true
@@ -163,7 +163,7 @@ user.errors
 Or, validations can be forced on both `null` and `undefined` attributes on construction.
 
 ```coffee
-class User extends Frozen.Model
+class User extends Frozen.Entity
   validations:
     name:
       required: true
@@ -181,14 +181,14 @@ user.errors
 #=> { name: 'Required' }
 ```
 
-#### Model Associations
+#### Entity Associations
 
-To create structured attributes, associate them with a **Frozen.Model** or **Frozen.Collection**.
+To create structured attributes, associate them with a **Frozen.Entity** or **Frozen.Collection**.
 
 ```coffee
-class Profile extends Frozen.Model
+class Profile extends Frozen.Entity
 
-class User extends Frozen.Model
+class User extends Frozen.Entity
   associations:
     profile: Profile
 
@@ -198,11 +198,11 @@ user.attributes
 ```
 
 ```coffee
-class Spell extends Frozen.Model
+class Spell extends Frozen.Entity
 class Spells extends Frozen.Collection
-  model: Spell
+  entity: Spell
 
-class User extends Frozen.Model
+class User extends Frozen.Entity
   associations:
     spells: Spells
 
@@ -214,12 +214,12 @@ user.attributes
 To validate associated attributes, include the `association: true` property.
 
 ```coffee
-class Profile extends Frozen.Model
+class Profile extends Frozen.Entity
   validations:
     type:
       required: true
 
-class User extends Frozen.Model
+class User extends Frozen.Entity
   associations:
     profile: User
 
@@ -234,43 +234,43 @@ user.errors
 #=> { profile: { type: 'Required' } }
 ```
 
-### Model.prototype.get
+### Entity.prototype.get
 
-##### `model.get(key)`
+##### `entity.get(key)`
 
-Given a key, returns the value of a model's attribute.
+Given a key, returns the value of an entity's attribute.
 
 ```coffee
-model = new Frozen.Model({ name: 'Elsa' })
-model.get('name')
+entity = new Frozen.Entity({ name: 'Elsa' })
+entity.get('name')
 #=> 'Anna'
 
-model.get('age')
+entity.get('age')
 #=> undefined
 ```
 
-### Model.prototype.set
+### Entity.prototype.set
 
-##### `model.set(attributes, options = @options)`
+##### `entity.set(attributes, options = @options)`
 
-Returns a new model by merging the given attributes into the model's attributes. Because model attributes are immutable, the original model is unchanged.
+Returns a new entity by merging the given attributes into the entity's attributes. Because entity attributes are immutable, the original entity is unchanged.
 
 ```coffee
-model = new Frozen.Model({ name: 'Anna' })
-model.set({ role: 'queen' })
-#=> new Frozen.Model({ name: 'Anna', role: 'queen' })
+entity = new Frozen.Entity({ name: 'Anna' })
+entity.set({ role: 'queen' })
+#=> new Frozen.Entity({ name: 'Anna', role: 'queen' })
 
-model.set({ name: 'Elsa' })
-#=> new Frozen.Model({ name: 'Elsa' })
+entity.set({ name: 'Elsa' })
+#=> new Frozen.Entity({ name: 'Elsa' })
 
-model.get('name')
+entity.get('name')
 #=> 'Anna'
 ```
 
-Unless specified, the new model inherits the same options as the original model.
+Unless specified, the new entity inherits the same options as the original entity.
 
 ```coffee
-mountaineer = new Frozen.Model({ name: 'Kristoff' })
+mountaineer = new Frozen.Entity({ name: 'Kristoff' })
 mountaineer.options
 #=> { validate: true }
 
@@ -283,14 +283,14 @@ queen.options
 #=> { validate: false }
 ```
 
-### Model.prototype.validate
+### Entity.prototype.validate
 
-##### `model.validate(option = 'force')`
+##### `entity.validate(option = 'force')`
 
-Returns a new model with forced validations of both `null` and `undefined` attributes. Because model errors are immutable, the original model is unchanged.
+Returns a new entity with forced validations of both `null` and `undefined` attributes. Because entity errors are immutable, the original entity is unchanged.
 
 ```coffee
-class User extends Frozen.Model
+class User extends Frozen.Entity
   validations:
     name:
       required: true
@@ -307,10 +307,10 @@ user.errors
 #=> {}
 ```
 
-Optionally, returns a new model with validations enabled or disabled. Because model errors are immutable, the original model is unchanged.
+Optionally, returns a new entity with validations enabled or disabled. Because entity errors are immutable, the original entity is unchanged.
 
 ```coffee
-class User extends Frozen.Model
+class User extends Frozen.Entity
   validations:
     name:
       required: true
@@ -327,14 +327,14 @@ disabled.errors
 #=> {}
 ```
 
-### Model.prototype.isValid
+### Entity.prototype.isValid
 
-##### `model.isValid()`
+##### `entity.isValid()`
 
-Returns `true` or `false` depending on whether the model has any errors.
+Returns `true` or `false` depending on whether the entity has any errors.
 
 ```coffee
-class User extends Frozen.Model
+class User extends Frozen.Entity
   validations:
     name:
       required: true
@@ -352,26 +352,26 @@ user.isValid()
 #=> false
 ```
 
-### Model.prototype.toJSON
+### Entity.prototype.toJSON
 
-##### `model.toJSON()`
+##### `entity.toJSON()`
 
-Returns a shallow copy of the model's attributes for JSON stringification.
+Returns a shallow copy of the entity's attributes for JSON stringification.
 
 The name of this method is a bit confusing, as it doesn't actually return a JSON string. Unfortunately, that's the way the JavaScript API for [JSON.stringify](https://developer.mozilla.org/en-US/docs/JSON#toJSON()_method) works.
 
 ```coffee
-model = new Frozen.Model({ name: 'Anna', princess: true })
-model.toJSON()
+entity = new Frozen.Entity({ name: 'Anna', princess: true })
+entity.toJSON()
 #=> { name: 'Anna', princess: true }
 ```
 
-Includes a shallow copy of the model's associated attributes as well.
+Includes a shallow copy of the entity's associated attributes as well.
 
 ```coffee
-class Profile extends Frozen.Model
+class Profile extends Frozen.Entity
 
-class User extends Frozen.Model
+class User extends Frozen.Entity
   associations:
     profile: Profile
 
@@ -382,27 +382,27 @@ user.toJSON()
 
 ## Frozen.Collection
 
-Instances of **Frozen.Collection** represent a related group of entities of an application's state. They consist of an ordered and immutable series of **models** and a **length**. They also have APIs for retrieving a single model, constructing new models, and converting models to JSON.
+Instances of **Frozen.Collection** represent a related group of entities of an application's state. They consist of an ordered and immutable series of **entities** and a **length**. They also have APIs for retrieving a single entity, constructing new entities, and converting entities to JSON.
 
-Custom collections extend **Frozen.Collection** with a model property, iterator functions, computed properties, etc.
+Custom collections extend **Frozen.Collection** with an entity property, iterator functions, computed properties, etc.
 
 ```coffee
-class User extends Frozen.Model
+class User extends Frozen.Entity
 
 class Users extends Frozen.Collection
-  model: User
+  entity: User
 
   findByName: (name) ->
-    return model for model in @models when model.get('name') is name
+    return entity for entity in @entities when entity.get('name') is name
 
   title: ->
-    ("Princes #{model.get('name')}" for model in @models)
+    ("Princes #{entity.get('name')}" for entity in @entities)
 
 anna = new User({name: 'Anna'})
 elsa = new User({name: 'Elsa'})
 
 users = new Users([anna, elsa])
-users.models
+users.entities
 #=> [ User({ name: 'Anna' }), User({ name: 'Elsa' }) ]
 
 users.length
@@ -417,63 +417,63 @@ users.title()
 
 ### Collection.prototype.constructor
 
-##### `new Frozen.Collection(models = [])`
+##### `new Frozen.Collection(entities = [])`
 
-Returns a new collection with the given array of models.
+Returns a new collection with the given array of entities.
 
 ```coffee
-anna = new Frozen.Model({ name: 'Anna' })
-elsa = new Frozen.Model({ name: 'Elsa' })
+anna = new Frozen.Entity({ name: 'Anna' })
+elsa = new Frozen.Entity({ name: 'Elsa' })
 
 collection = new Frozen.Collection([anna, elsa])
-collection.models
-#=> [ Frozen.Model({ name: 'Anna' }), Frozen.Model({ name: 'Elsa' }) ]
+collection.entities
+#=> [ Frozen.Entity({ name: 'Anna' }), Frozen.Entity({ name: 'Elsa' }) ]
 
 collection.length
 #=> 2
 ```
 
-If an array of attributes is given, new models are instantiated.
+If an array of attributes is given, new entities are instantiated.
 
 ```coffee
 anna = { name: 'Anna' }
 elsa = { name: 'Elsa' }
 
 collection = new Frozen.Collection([anna, elsa])
-collection.models
-#=> [ Frozen.Model({ name: 'Anna' }), Frozen.Model({ name: 'Elsa' }) ]
+collection.entities
+#=> [ Frozen.Entity({ name: 'Anna' }), Frozen.Entity({ name: 'Elsa' }) ]
 
 collection.length
 #=> 2
 ```
 
-To instantiate custom models, provide a `model` property.
+To instantiate custom entities, provide a `entity` property.
 
 ```coffee
-class User extends Frozen.Model
+class User extends Frozen.Entity
 
 class Users extends Frozen.Collection
-  model: User
+  entity: User
 
 anna = { name: 'Anna' }
 elsa = { name: 'Elsa' }
 
 users = new Users([anna, elsa])
-users.models
+users.entities
 #=> [ User({ name: 'Anna' }), User({ name: 'Elsa' }) ]
 
 users.length
 #=> 2
 ```
 
-Accepts a single model or attributes object.
+Accepts a single entity or attributes object.
 
 ```coffee
-anna = new Frozen.Model({ name: 'Anna' })
+anna = new Frozen.Entity({ name: 'Anna' })
 
 collection = new Frozen.Collection(anna)
-collection.models
-#=> [ Frozen.Model({ name: 'Anna' }) ]
+collection.entities
+#=> [ Frozen.Entity({ name: 'Anna' }) ]
 
 collection.length
 #=> 1
@@ -483,7 +483,7 @@ Also accepts no arguments at all.
 
 ```coffee
 collection = new Frozen.Collection()
-collection.models
+collection.entities
 #=> []
 
 collection.length
@@ -494,12 +494,12 @@ collection.length
 
 ##### `collection.at(index)`
 
-Returns the model at the given index positioned by insertion order.
+Returns the entity at the given index positioned by insertion order.
 
 ```coffee
 collection = new Frozen.Collection({ name: 'Anna' })
 collection.at(0)
-#=> Frozen.Model({ name: 'Anna' })
+#=> Frozen.Entity({ name: 'Anna' })
 
 collection.at(1)
 #=> undefined
@@ -507,59 +507,59 @@ collection.at(1)
 
 ### Collection.prototype.insert
 
-##### `collection.insert(index, model = {})`
+##### `collection.insert(index, entity = {})`
 
-Returns a new collection with the given model inserted at the given index positioned by insertion order. Because collection models are immutable, the original collection is unchanged.
+Returns a new collection with the given entity inserted at the given index positioned by insertion order. Because collection entities are immutable, the original collection is unchanged.
 
 ```coffee
 collection = new Frozen.Collection({ name: 'Elsa' })
 collection.insert(0, { name: 'Anna' })
-#=> new Frozen.Collection([ Frozen.Model({ name: 'Anna'), Frozen.Model({ name: 'Elsa') ])
+#=> new Frozen.Collection([ Frozen.Entity({ name: 'Anna'), Frozen.Entity({ name: 'Elsa') ])
 
 collection.insert(1, { name: 'Anna' })
-#=> new Frozen.Collection([ Frozen.Model({ name: 'Elsa'), Frozen.Model({ name: 'Anna') ])
+#=> new Frozen.Collection([ Frozen.Entity({ name: 'Elsa'), Frozen.Entity({ name: 'Anna') ])
 
 collection.at(0)
-#=> Frozen.Model({ name: 'Elsa')
+#=> Frozen.Entity({ name: 'Elsa')
 ```
 
 ### Collection.prototype.push
 
-##### `collection.push(model = {})`
+##### `collection.push(entity = {})`
 
-Returns a new collection with the given model appended to the end. Because collection models are immutable, the original collection is unchanged.
+Returns a new collection with the given entity appended to the end. Because collection entities are immutable, the original collection is unchanged.
 
 ```coffee
 collection = new Frozen.Collection({ name: 'Elsa' })
 
-model = new Frozen.Model({ name: 'Anna' })
-collection.push(model)
-#=> new Frozen.Collection([ Frozen.Model({ name: 'Elsa'), Frozen.Model({ name: 'Anna') ])
+entity = new Frozen.Entity({ name: 'Anna' })
+collection.push(entity)
+#=> new Frozen.Collection([ Frozen.Entity({ name: 'Elsa'), Frozen.Entity({ name: 'Anna') ])
 
 collection.length
 #=> 1
 ```
 
-If attributes are given, a new model is instantiated.
+If attributes are given, a new entity is instantiated.
 
 ```coffee
 collection = new Frozen.Collection({ name: 'Elsa' })
 
-model = { name: 'Anna' }
-collection.push(model)
-#=> new Frozen.Collection([ Frozen.Model({ name: 'Elsa'), Frozen.Model({ name: 'Anna') ])
+entity = { name: 'Anna' }
+collection.push(entity)
+#=> new Frozen.Collection([ Frozen.Entity({ name: 'Elsa'), Frozen.Entity({ name: 'Anna') ])
 
 collection.length
 #=> 1
 ```
 
-To instantiate a custom model, provide a `model` property.
+To instantiate a custom entity, provide a `entity` property.
 
 ```coffee
-class User extends Frozen.Model
+class User extends Frozen.Entity
 
 class Users extends Frozen.Collection
-  model: User
+  entity: User
 
 users = new Users({ name: 'Elsa' })
 
@@ -575,39 +575,39 @@ users.length
 
 ##### `collection.change(index, attributes)`
 
-Returns a new collection by merging the given attributes into the collection's model at the given index. Because collection models are immutable, the original collection is unchanged.
+Returns a new collection by merging the given attributes into the collection's entity at the given index. Because collection entities are immutable, the original collection is unchanged.
 
 
 ### Collection.prototype.remove
 
 ##### `collection.remove(index)`
 
-Returns a new collection without the model at the given index. Because collection models are immutable, the original collection is unchanged.
+Returns a new collection without the entity at the given index. Because collection entities are immutable, the original collection is unchanged.
 
 
 ### Collection.prototype.validate
 
 ##### `collection.validate()`
 
-Returns a new collection with forced validations for all models. Because collection models are immutable, the original collection is unchanged.
+Returns a new collection with forced validations for all entities. Because collection entities are immutable, the original collection is unchanged.
 
 
 ### Collection.prototype.isValid
 
 ##### `collection.isValid()`
 
-Returns `true` or `false` depending on whether all models are valid.
+Returns `true` or `false` depending on whether all entities are valid.
 
 
 ### Collection.prototype.map
 
 ##### `collection.map(callback, thisArg)`
 
-Returns a new Array of values by mapping each model in the collection through a transformation callback function. The callback accepts the following arguments:
+Returns a new Array of values by mapping each entity in the collection through a transformation callback function. The callback accepts the following arguments:
 
-* `model` - The current model being processed. (Optional)
-* `index` - The index of the current model positioned by insertion order. (Optional)
-* `models` - The array of models in the collection. (Optional)
+* `entity` - The current entity being processed. (Optional)
+* `index` - The index of the current entity positioned by insertion order. (Optional)
+* `entities` - The array of entities in the collection. (Optional)
 
 
 Optionally, the callback may be given a thisArg to use as `this` when executing.
@@ -617,7 +617,7 @@ Optionally, the callback may be given a thisArg to use as `this` when executing.
 
 ##### `collection.toJSON()`
 
-Returns an array of the collection's models for JSON stringification by leveraging `model.toJSON()`.
+Returns an array of the collection's entities for JSON stringification by leveraging `entity.toJSON()`.
 
 The name of this method is a bit confusing, as it doesn't actually return a JSON string. Unfortunately, that's the way the JavaScript API for [JSON.stringify](https://developer.mozilla.org/en-US/docs/JSON#toJSON()_method) works.
 
