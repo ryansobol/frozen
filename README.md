@@ -698,15 +698,21 @@ class User extends Frozen.Entity
 class Users extends Frozen.Collection
   entity: User
 
-users = new Users({ name: null })
+users = new Users([ { name: 'Elsa' }, {} ])
 user.at(0).errors
+#=> {}
+user.at(1).errors
 #=> {}
 
 forced = user.validate()
 forced.at(0).errors
+#=> {}
+forced.at(1).errors
 #=> { name: 'Required' }
 
 user.at(0).errors
+#=> {}
+user.at(1).errors
 #=> {}
 ```
 
@@ -725,16 +731,20 @@ class User extends Frozen.Entity
 class Users extends Frozen.Collection
   entity: User
 
-users = new Users({ name: null })
+users = new Users([ { name: 'Elsa' }, {} ])
 user.at(0).errors
+#=> {}
+user.at(1).errors
 #=> {}
 user.isValid()
 #=> true
 
-users = users.validate()
-users.at(0).errors
+forced = users.validate()
+forced.at(0).errors
+#=> {}
+forced.at(1).errors
 #=> { name: 'Required' }
-user.isValid()
+forced.isValid()
 #=> false
 ```
 
