@@ -71,9 +71,13 @@ In your pull request, please make a strong case as to why the changes are necess
 
 ## Frozen.Entity
 
-Instances of **Frozen.Entity** represent a single entity in an application's state. They consist of immutable key-value **attributes** and validation **errors**. They also have APIs for retrieving a single attribute, constructing new entities, and converting attributes to JSON.
+Instances of **Frozen.Entity** represent a single object in an application's state. They are composed of two immutable properties -- key-value **attributes** and validation **errors**. They also have APIs for:
 
-Custom entities extend **Frozen.Entity** with domain-specific validation rules, associated attributes, computed properties, etc.
+- Constructing new entities from an existing one
+- Retrieving a single attribute from within an entity
+- Converting an entity to JSON
+
+A subclass extends **Frozen.Entity** with domain-specific validation rules, associated attributes, computed properties, etc.
 
 ```coffee
 class Profile extends Frozen.Entity
@@ -382,9 +386,14 @@ user.toJSON()
 
 ## Frozen.Collection
 
-Instances of **Frozen.Collection** represent a related group of entities of an application's state. They consist of an ordered and immutable series of **entities** and a **length**. They also have APIs for retrieving a single entity, constructing new entities, and converting entities to JSON.
+Instances of **Frozen.Collection** represent a related group of entities within an application's state. They are composed of two immutable properties -- a sequence of **entities** and a **length**. They also have APIs for:
 
-Custom collections extend **Frozen.Collection** with an entity property, iterator functions, computed properties, etc.
+- Constructing new collections from an existing one
+- Retrieving a single entity from within a collection
+- Iterating through a collection's entities
+- Converting a collection to JSON
+
+A subclass extends **Frozen.Collection** with an entity property, custom iterator functions, computed properties, etc.
 
 ```coffee
 class User extends Frozen.Entity
