@@ -260,15 +260,15 @@ entity.get('age')
 Returns a new entity by merging the given attributes into the entity's attributes. Because an entity's attributes are immutable, the original entity is unchanged.
 
 ```coffee
-entity = new Frozen.Entity({ name: 'Anna' })
+entity = new Frozen.Entity({ name: 'Elsa' })
 entity.set({ role: 'queen' })
-#=> new Frozen.Entity({ name: 'Anna', role: 'queen' })
+#=> new Frozen.Entity({ name: 'Elsa', role: 'queen' })
 
-entity.set({ name: 'Elsa' })
-#=> new Frozen.Entity({ name: 'Elsa' })
+entity.set({ name: 'Anna' })
+#=> new Frozen.Entity({ name: 'Anna' })
 
 entity.get('name')
-#=> 'Anna'
+#=> 'Elsa'
 ```
 
 Unless specified, the new entity inherits the same options as the original entity.
@@ -291,7 +291,7 @@ queen.options
 
 ##### `entity.validate(option = 'force')`
 
-Returns a new entity with forced validations of both `null` and `undefined` attributes. Because entity errors are immutable, the original entity is unchanged.
+Returns a new entity with forced validations of both `null` and `undefined` attributes. Because an entity's errors are immutable, the original entity is unchanged.
 
 ```coffee
 class User extends Frozen.Entity
@@ -311,7 +311,7 @@ user.errors
 #=> {}
 ```
 
-Optionally, returns a new entity with validations enabled or disabled. Because entity errors are immutable, the original entity is unchanged.
+Optionally, returns a new entity with validations enabled or disabled. Because an entity's errors are immutable, the original entity is unchanged.
 
 ```coffee
 class User extends Frozen.Entity
@@ -650,6 +650,22 @@ users.entities
 
 Returns a new collection by merging the given attributes into the collection's entity at the given index. Because a collection's entities are immutable, the original collection is unchanged.
 
+```coffee
+collection = new Frozen.Collection({ name: 'Elsa' })
+
+collection.change(0, { role: 'Snow Queen' })
+#=> new Frozen.Collection([
+#     Frozen.Entity({ name: 'Elsa', role: 'Snow Queen' })
+#   ])
+
+collection.change(0, { name: 'Anna' })
+#=> new Frozen.Collection([
+#     Frozen.Entity({ name: 'Anna' })
+#   ])
+
+collection.entities
+#=> [ Frozen.Entity({ name: 'Elsa' }) ]
+```
 
 ### Collection.prototype.remove
 
@@ -657,6 +673,15 @@ Returns a new collection by merging the given attributes into the collection's e
 
 Returns a new collection without the entity at the given index. Because a collection's entities are immutable, the original collection is unchanged.
 
+```coffee
+collection = new Frozen.Collection({ name: 'Elsa' })
+
+collection.remove(0)
+#=> new Frozen.Collection([])
+
+collection.entities
+#=> [ Frozen.Entity({ name: 'Elsa' }) ]
+```
 
 ### Collection.prototype.validate
 
@@ -664,6 +689,26 @@ Returns a new collection without the entity at the given index. Because a collec
 
 Returns a new collection with forced validations for all entities. Because a collection's entities are immutable, the original collection is unchanged.
 
+```coffee
+class User extends Frozen.Entity
+  validations:
+    name:
+      required: true
+
+class Users extends Frozen.Collection
+  entity: User
+
+users = new Users({ name: null })
+user.at(0).errors
+#=> {}
+
+forced = user.validate()
+forced.at(0).errors
+#=> { name: 'Required' }
+
+user.at(0).errors
+#=> {}
+```
 
 ### Collection.prototype.isValid
 
@@ -671,6 +716,27 @@ Returns a new collection with forced validations for all entities. Because a col
 
 Returns `true` or `false` depending on whether all entities are valid.
 
+```coffee
+class User extends Frozen.Entity
+  validations:
+    name:
+      required: true
+
+class Users extends Frozen.Collection
+  entity: User
+
+users = new Users({ name: null })
+user.at(0).errors
+#=> {}
+user.isValid()
+#=> true
+
+users = users.validate()
+users.at(0).errors
+#=> { name: 'Required' }
+user.isValid()
+#=> false
+```
 
 ### Collection.prototype.map
 
