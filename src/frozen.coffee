@@ -84,7 +84,6 @@ class Collection
     @entities[index]
 
   insert: (index, entity = {}) ->
-    entity = new @entity(entity) unless entity instanceof Entity
     entities = @entities[...index]
     entities.push(entity)
     entities = entities.concat(@entities[index..])
