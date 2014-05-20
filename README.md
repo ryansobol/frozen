@@ -407,10 +407,10 @@ class Users extends Frozen.Collection
   title: ->
     ("Princes #{entity.get('name')}" for entity in @entities)
 
-anna = new User({name: 'Anna'})
-elsa = new User({name: 'Elsa'})
+anna = new User({ name: 'Anna' })
+elsa = new User({ name: 'Elsa' })
 
-users = new Users([anna, elsa])
+users = new Users([ anna, elsa ])
 users.entities
 #=> [ User({ name: 'Anna' }), User({ name: 'Elsa' }) ]
 
@@ -418,10 +418,10 @@ users.length
 #=> 2
 
 users.findByName('Elsa')
-#=> User({name: 'Elsa'})
+#=> User({ name: 'Elsa' })
 
 users.title()
-#=> ['Princess Anna', 'Princess Elsa']
+#=> [ 'Princess Anna', 'Princess Elsa' ]
 ```
 
 ### Collection.prototype.constructor
@@ -434,7 +434,7 @@ Returns a new collection with the given array of entities.
 anna = new Frozen.Entity({ name: 'Anna' })
 elsa = new Frozen.Entity({ name: 'Elsa' })
 
-collection = new Frozen.Collection([anna, elsa])
+collection = new Frozen.Collection([ anna, elsa ])
 collection.entities
 #=> [ Frozen.Entity({ name: 'Anna' }), Frozen.Entity({ name: 'Elsa' }) ]
 
@@ -448,7 +448,7 @@ If an array of attributes is given, new entities are instantiated.
 anna = { name: 'Anna' }
 elsa = { name: 'Elsa' }
 
-collection = new Frozen.Collection([anna, elsa])
+collection = new Frozen.Collection([ anna, elsa ])
 collection.entities
 #=> [ Frozen.Entity({ name: 'Anna' }), Frozen.Entity({ name: 'Elsa' }) ]
 
@@ -467,7 +467,7 @@ class Users extends Frozen.Collection
 anna = { name: 'Anna' }
 elsa = { name: 'Elsa' }
 
-users = new Users([anna, elsa])
+users = new Users([ anna, elsa ])
 users.entities
 #=> [ User({ name: 'Anna' }), User({ name: 'Elsa' }) ]
 
@@ -475,7 +475,7 @@ users.length
 #=> 2
 ```
 
-Accepts a single entity or attributes object.
+The constructor accepts a single entity or attributes object as well as no arguments at all.
 
 ```coffee
 anna = new Frozen.Entity({ name: 'Anna' })
@@ -487,8 +487,6 @@ collection.entities
 collection.length
 #=> 1
 ```
-
-Also accepts no arguments at all.
 
 ```coffee
 collection = new Frozen.Collection()
@@ -518,35 +516,95 @@ collection.at(1)
 
 ##### `collection.insert(index, entity = {})`
 
-Returns a new collection with the given entity inserted at the given index positioned by insertion order. Because collection entities are immutable, the original collection is unchanged.
+Returns a new collection with the given entity inserted at the given index positioned by insertion order. Because a collection's entities are immutable, the original collection is unchanged.
 
 ```coffee
 collection = new Frozen.Collection({ name: 'Elsa' })
-collection.insert(0, { name: 'Anna' })
-#=> new Frozen.Collection([ Frozen.Entity({ name: 'Anna'), Frozen.Entity({ name: 'Elsa') ])
 
-collection.insert(1, { name: 'Anna' })
-#=> new Frozen.Collection([ Frozen.Entity({ name: 'Elsa'), Frozen.Entity({ name: 'Anna') ])
+entity = new Frozen.Entity({ name: 'Anna' })
+collection.insert(0, entity)
+#=> new Frozen.Collection([
+#     Frozen.Entity({ name: 'Anna' }),
+#     Frozen.Entity({ name: 'Elsa' })
+#   ])
 
-collection.at(0)
-#=> Frozen.Entity({ name: 'Elsa')
+collection.insert(1, entity)
+#=> new Frozen.Collection([
+#     Frozen.Entity({ name: 'Elsa' }),
+#     Frozen.Entity({ name: 'Anna' })
+#   ])
+
+collection.entities
+#=> [ Frozen.Entity({ name: 'Elsa' }) ]
+```
+
+If attributes are given, a new entity is instantiated.
+
+```coffee
+collection = new Frozen.Collection({ name: 'Elsa' })
+
+entity = { name: 'Anna' }
+collection.insert(0, entity)
+#=> new Frozen.Collection([
+#     Frozen.Entity({ name: 'Anna' }),
+#     Frozen.Entity({ name: 'Elsa' })
+#   ])
+
+collection.insert(1, entity)
+#=> new Frozen.Collection([
+#     Frozen.Entity({ name: 'Elsa' }),
+#     Frozen.Entity({ name: 'Anna' })
+#   ])
+
+collection.entities
+#=> [ Frozen.Entity({ name: 'Elsa' }) ]
+```
+
+To instantiate a custom entity, provide a `entity` property.
+
+```coffee
+class User extends Frozen.Entity
+
+class Users extends Frozen.Collection
+  entity: User
+
+users = new Users({ name: 'Elsa' })
+
+user = { name: 'Anna' }
+users.insert(0, user)
+#=> new Users([
+#     User({ name: 'Anna' }),
+#     User({ name: 'Elsa' })
+#   ])
+
+users.insert(1, user)
+#=> new Users([
+#     User({ name: 'Elsa' }),
+#     User({ name: 'Anna' })
+#   ])
+
+users.entities
+#=> [ User({ name: 'Elsa' }) ]
 ```
 
 ### Collection.prototype.push
 
 ##### `collection.push(entity = {})`
 
-Returns a new collection with the given entity appended to the end. Because collection entities are immutable, the original collection is unchanged.
+Returns a new collection with the given entity appended to the end. Because a collection's entities are immutable, the original collection is unchanged.
 
 ```coffee
 collection = new Frozen.Collection({ name: 'Elsa' })
 
 entity = new Frozen.Entity({ name: 'Anna' })
 collection.push(entity)
-#=> new Frozen.Collection([ Frozen.Entity({ name: 'Elsa'), Frozen.Entity({ name: 'Anna') ])
+#=> new Frozen.Collection([
+#     Frozen.Entity({ name: 'Elsa' }),
+#     Frozen.Entity({ name: 'Anna' })
+#   ])
 
-collection.length
-#=> 1
+collection.entities
+#=> [ Frozen.Entity({ name: 'Elsa' }) ]
 ```
 
 If attributes are given, a new entity is instantiated.
@@ -556,10 +614,13 @@ collection = new Frozen.Collection({ name: 'Elsa' })
 
 entity = { name: 'Anna' }
 collection.push(entity)
-#=> new Frozen.Collection([ Frozen.Entity({ name: 'Elsa'), Frozen.Entity({ name: 'Anna') ])
+#=> new Frozen.Collection([
+#     Frozen.Entity({ name: 'Elsa' }),
+#     Frozen.Entity({ name: 'Anna' })
+#   ])
 
-collection.length
-#=> 1
+collection.entities
+#=> [ Frozen.Entity({ name: 'Elsa' }) ]
 ```
 
 To instantiate a custom entity, provide a `entity` property.
@@ -574,31 +635,34 @@ users = new Users({ name: 'Elsa' })
 
 user = { name: 'Anna' }
 users.push(user)
-#=> new Users([ User({ name: 'Elsa'), User({ name: 'Anna') ])
+#=> new Users([
+#     User({ name: 'Elsa' }),
+#     User({ name: 'Anna' })
+#   ])
 
-users.length
-#=> 1
+users.entities
+#=> [ User({ name: 'Elsa' }) ]
 ```
 
 ### Collection.prototype.change
 
 ##### `collection.change(index, attributes)`
 
-Returns a new collection by merging the given attributes into the collection's entity at the given index. Because collection entities are immutable, the original collection is unchanged.
+Returns a new collection by merging the given attributes into the collection's entity at the given index. Because a collection's entities are immutable, the original collection is unchanged.
 
 
 ### Collection.prototype.remove
 
 ##### `collection.remove(index)`
 
-Returns a new collection without the entity at the given index. Because collection entities are immutable, the original collection is unchanged.
+Returns a new collection without the entity at the given index. Because a collection's entities are immutable, the original collection is unchanged.
 
 
 ### Collection.prototype.validate
 
 ##### `collection.validate()`
 
-Returns a new collection with forced validations for all entities. Because collection entities are immutable, the original collection is unchanged.
+Returns a new collection with forced validations for all entities. Because a collection's entities are immutable, the original collection is unchanged.
 
 
 ### Collection.prototype.isValid
