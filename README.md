@@ -758,9 +758,26 @@ Returns a new Array of values by mapping each entity in the collection through a
 * `index` - The index of the current entity positioned by insertion order. (Optional)
 * `entities` - The array of entities in the collection. (Optional)
 
+```coffee
+collection = new Frozen.Collection([ { name: 'Anna'}, { name: 'Elsa' } ])
+
+collection.map (entity, index, entities) ->
+  "#{entity.get('name')} #{index + 1} of #{entities.length}"
+#=> [ 'Anna 1 of 2', 'Elsa 2 of 2' ]
+```
 
 Optionally, the callback may be given a thisArg to use as `this` when executing.
 
+```coffee
+collection = new Frozen.Collection([ { name: 'Anna'}, { name: 'Elsa' } ])
+
+@title = 'Princess'
+
+collection.map (entity) ->
+  "#{@title} #{entity.get('name')}"
+, this
+#=> [ 'Princess Anna', 'Princess Elsa' ]
+```
 
 ### Collection.prototype.toJSON
 
