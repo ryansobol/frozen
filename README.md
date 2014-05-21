@@ -49,13 +49,89 @@ royals.at(0)
 
 ## Introduction
 
-I wrote Frozen for two reasons -- faster React performance and faster development time.
+Browser-based applications all share a huge performance bottleneck -- querying and modifying the DOM. [React](http://facebook.github.io/react/) is my preferred UI library because it mitigates this bottleneck without sacrificing expressivity.
 
-[INSERT RATIONALE FOR IMMUTABLE DATA STRUCTURES WITH REACT]
+Essentially, React applications are a tree of components. On render, React starts at the root component, traverses down into it's branch and leaf components, building a virtual representation of the browser's DOM. The virtual DOM generates HTML which is inserted into a container in the real DOM.
 
-[INSERT RATIONALE ON BACKBONE'S DATA MODELING]
+![](https://i.imgur.com/CFFhmQw.png)
 
-[INSERT RATIONALE ON GARY BERNHARDT'S IMMUTABLE CORE, IMPERATIVE SHELL]
+When a component's `@props` or `@state` changes, it goes through a [reconciliation process](http://facebook.github.io/react/docs/reconciliation.html), computing the difference between the current and next virtual DOM, and then applying a minimal set of changes to the real DOM, updating it to match the virtual DOM.
+
+Before a component begins reconciliation, it's `shouldComponentUpdate` function is called. If `false` is returned, the component aborts reconciling itself and any child component it creates in the tree. In effect, React won't waste time reconciling parts of the virtual DOM that don't need updating.
+
+By default, the `shouldComponentUpdate` implementation is [extremely conservative](http://facebook.github.io/react/docs/component-specs.html#updating-shouldcomponentupdate) and returns `true` by default. This is because applications tend to mutate objects. And the only way to guarantee a mutable object hasn't changed before the next reconciliation process starts is to check every property.
+
+```coffee
+{button, div, h2, li, span, ul} = React.DOM
+
+CommentNode = React.createClass
+  render: ->
+    li null,
+      h2 null, @props.comment.author
+      span null, @props.comment.text
+
+  shouldComponentUpdate: (nextProps, nextState) ->
+    nextProps.comment.author isnt @props.comment.author ||
+    nextProps.comment.text isnt @props.comment.text
+
+CommentList = React.createClass
+  getInitialState: ->
+    comments: [ { author: 'Someone', text: 'Something' } ]
+
+  render: ->
+    div null,
+      ul null, @state.comments.map (comment) -> CommentNode({ comment: comment })
+      button onClick: @click, 'Click Me'
+
+  click: ->
+    comments = @state.comments.push({ author: 'Someone', text: 'Something' })
+    @setState({ comments: comments })
+
+React.renderComponent
+  CommentList()
+  document.getElementById('comment-list')
+```
+
+Alternatively, immutable objects -- objects that can never change once created -- allow a component to implement `shouldComponentUpdate` with a reference equality check, _the fastest check possible_.
+
+```coffee
+{button, div, h2, li, span, ul} = React.DOM
+
+CommentNode = React.createClass
+  render: ->
+    li null,
+      h2 null, @props.comment.author
+      span null, @props.comment.text
+
+  shouldComponentUpdate: (nextProps, nextState) ->
+    # Assumes both objects have not been mutated
+    nextProps isnt @props
+
+CommentList = React.createClass
+  getInitialState: ->
+    comments: [ { author: 'Someone', text: 'Something' } ]
+
+  render: ->
+    div null,
+      ul null, @state.comments.map (comment) -> CommentNode({ comment: comment })
+      button onClick: @click, 'Click Me'
+
+  click: ->
+    comments = @state.comments + [ { author: 'Someone', text: 'Something' } ]
+    @setState({ comments: comments })
+
+React.renderComponent
+  CommentList()
+  document.getElementById('comment-list')
+```
+
+
+### Disadvantages
+
+[INSERT THE DISADVANTAGE OF GENERATING GARBAGE FOR EACH STATE CHANGE]
+
+
+### Production Status
 
 While it's probably not bug free, Frozen has a comprehensive test suite. I'm using Frozen in a production environment without any issues.
 
